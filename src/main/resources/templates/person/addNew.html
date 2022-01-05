@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add new Person</title>
+</head>
+<body>
+
+    <h2 style="text-align: center">Add new Person</h2>
+    <form style="text-align: center" th:method="POST" th:action="@{/person}" th:object="${person}">
+
+        <label for="username">username</label><br>
+        <input type="text" th:required="required" th:field="*{username}" id="username" /><br>
+        <span style="color: red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username Error</span><br><br>
+
+        <label for="password">password</label><br>
+        <input type="password" required th:field="*{password}" id="password" /><br>
+        <span style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</span><br><br>
+
+        <label for="email">email</label><br>
+        <input type="text" required="required" th:field="*{email}" id="email" /><br>
+        <span style="color: red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</span><br><br>
+
+        <label for="birthday">birthday</label><br>
+        <input type="date" required th:field="*{birthday}" id="birthday" /><br>
+        <span style="color: red" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}">Birthday Error</span><br><br>
+
+        <label for="taxNumber">TAX-NUMBER</label><br>
+        <input type="text" required th:field="*{taxNumber}" id="taxNumber" /><br>
+        <span style="color: red" th:if="${#fields.hasErrors('taxNumber')}" th:errors="*{taxNumber}">Tax-Number Error</span><br><br>
+
+        <input type="submit" value="Create">
+    </form>
+
+</body>
+</html>
