@@ -21,7 +21,7 @@ public class PersonDetails {
     private BigDecimal money;
 
     @NonNull
-    @Column(name = "tax_number")
+    @Column(name = "tax_number", unique = true)
     private String taxNumber;
 
 }

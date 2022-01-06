@@ -44,6 +44,11 @@ public class PersonService implements UserDetailsService {
         personRepository.save(person);
     }
 
+    public boolean isPersonAlreadyExistByUsername(String username) {
+        Optional<Person> person = personRepository.findPersonByUsername(username);
+        return person.isPresent();
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Person> person = personRepository.findPersonByUsername(username);

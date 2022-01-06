@@ -1,6 +1,7 @@
 package com.oleh.chui.learning_platform.controller;
 
 import com.oleh.chui.learning_platform.dto.PersonDTO;
+import com.oleh.chui.learning_platform.service.PersonDetailsService;
 import com.oleh.chui.learning_platform.service.PersonService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,9 +18,11 @@ import javax.validation.Valid;
 public class RegistrationController {
 
     private final PersonService personService;
+    private final PersonDetailsService personDetailsService;
 
-    public RegistrationController(PersonService personService) {
+    public RegistrationController(PersonService personService, PersonDetailsService personDetailsService) {
         this.personService = personService;
+        this.personDetailsService = personDetailsService;
     }
 
     @GetMapping()
@@ -30,13 +33,28 @@ public class RegistrationController {
     }
 
     @PostMapping()
-    public String addNewPerson(@ModelAttribute("person") @Valid PersonDTO person,
+    public String addNewPerson(Model model, @ModelAttribute("person") @Valid PersonDTO person,
                                BindingResult result) {
-        if (result.hasErrors())
+        if (result.hasErrors()) {
             return "registration";
+        }
 
-//        personService.createUser(person);
+        if (!person.getPassword().equals(person.getPasswordCopy())) {
+            model.addAttribute("passwordsDontMatch", true);
+            return "registration";
+        }
 
+        if (personService.isPersonAlreadyExistByUsername(person.getUsername())) {
+            model.addAttribute("userAlreadyExistsError", true);
+            return "registration";
+        }
+
+        if (personDetailsService.isTaxNumberAlreadyExist(person.getTaxNumber())) {
+            model.addAttribute("taxNumberAlreadyExistsError", true);
+            return "registration";
+        }
+
+        personService.createUser(person);
         return "redirect:/person";
     }
 

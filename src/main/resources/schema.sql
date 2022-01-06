@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS roles (
 CREATE TABLE IF NOT EXISTS user_details (
     id serial PRIMARY KEY ,
     money numeric NOT NULL ,
-    tax_number varchar(16) NOT NULL
+    tax_number varchar(16) UNIQUE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS persons (

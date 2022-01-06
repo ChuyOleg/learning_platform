@@ -12,21 +12,25 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class PersonDTO {
-    @NotBlank(message = "Username is mandatory")
+    @NotBlank()
     private String username;
 
-    @NotBlank(message = "Password is mandatory")
-    @Size(min = 4, max = 32, message = "Password length should be from 4 to 64")
+    @NotBlank()
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,32}$")
     private String password;
 
-    @NotBlank(message = "Email is mandatory")
-    @Email(message = "Incorrect email format")
+    @NotBlank
+    private String passwordCopy;
+
+    @NotBlank()
+    @Pattern(regexp = ".+@.+\\..+")
     private String email;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Past(message = "Incorrect birthday")
+    @Past()
+    @NotNull
     private LocalDate birthday;
 
-    @NotBlank(message = "Tax-Number is mandatory")
+    @NotBlank()
     private String taxNumber;
 }
