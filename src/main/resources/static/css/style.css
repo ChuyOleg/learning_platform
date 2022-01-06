@@ -1,6 +1,22 @@
 /*******   LOGIN PAGE   ********/
 /*******************************/
 
+body {
+    height:100vh;
+    margin:0;
+    display: flex;
+    flex-direction: column;
+}
+
+body.login-page {
+    background-image: url("../img/login_registration_background.jpg");
+    background-size: cover;
+}
+
+body.login-page .login-form {
+    background: #d6e9d1;
+}
+
 body.login-page .login-form input.btn {
     background: #8cc3ff;
 }
@@ -17,12 +33,30 @@ body.login-page .error-message {
 body.login-page .sign-up-link {
     text-decoration: none;
     font-weight: bold;
-    color: lightskyblue;
+    color: cornflowerblue;
     font-style: italic;
+}
+
+body.login-page .language-button {
+    width: 30%;
+    background: #8cc3ff;
+}
+
+body.login-page .language-button:hover {
+    background: dodgerblue;
 }
 
 /*******   REGISTRATION PAGE   ********/
 /**************************************/
+
+body.registration-page {
+    background-image: url("../img/login_registration_background.jpg");
+    background-size: cover;
+}
+
+body.registration-page .registration-form {
+    background: #d6e9d1;
+}
 
 body.registration-page .registration-form input.btn {
     background: #8cc3ff;
@@ -40,6 +74,39 @@ body.registration-page .error-message {
 body.registration-page .login-link {
     text-decoration: none;
     font-weight: bold;
-    color: lightskyblue;
+    color: cornflowerblue;
     font-style: italic;
 }
+
+body.registration-page .language-button {
+    width: 30%;
+    background: #8cc3ff;
+}
+
+body.registration-page .language-button:hover {
+    background: dodgerblue;
+}
+
+/*******   CREATING COURSE (info)   ********/
+/*******************************************/
+
+
+
+/*******   FOOTER   ********/
+/*******************************/
+
+footer.page-footer {
+    background: #221921;
+    height: 6.8vh;
+    padding-top: 1.6vh;
+    padding-bottom: 1.6vh;
+    color: white;
+    margin-top: auto;
+}
+
+footer.page-footer a {
+    text-decoration: none;
+    font-weight: bold;
+    color: navajowhite;
+}
+

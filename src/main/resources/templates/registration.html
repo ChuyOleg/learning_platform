@@ -2,72 +2,86 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Registration</title>
+    <title th:text="#{registrationPageName}"></title>
 
     <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body class="registration-page">
-<div class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <div class="card my-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card my-3">
 
-                <form th:action="@{/registration}" novalidate method="post" th:object="${person}"
-                      class="card-body registration-form p-sm-4" id="registration-form">
+                    <form th:action="@{/registration}" novalidate method="post" th:object="${person}"
+                          class="card-body registration-form p-sm-4" id="registration-form">
 
-                    <h2 class="text-center text-dark mt-1" th:text="#{registrationPageName}"></h2><br>
+                        <div class="text-center">
+                            <button type="button" class="btn language-button" th:text="#{english}" id="englishLanguageButton"></button>
+                            <button type="button" class="btn language-button" th:text="#{ukrainian}" id="ukrainianLanguageButton"></button>
+                        </div>
 
-                    <div class="mb-2">
-                        <label for="username" th:text="#{username}"></label>
-                        <input type="text" class="form-control" th:field="*{username}" id="username"/>
-                        <p class="error-message" th:if="${#fields.hasErrors('username')}" th:text="#{incorrectUsername}"></p>
-                        <p class="error-message" th:if="${#request.getAttribute('userAlreadyExistsError')}" th:text="#{usernameIsOccupied}"></p>
-                    </div>
+                        <h2 class="text-center text-dark mt-4" th:text="#{registrationPageName}"></h2><br>
 
-                    <div class="mb-2">
-                        <label for="password" th:text="#{password}"></label>
-                        <input type="password" class="form-control" th:field="*{password}" id="password"/>
-                        <p class="error-message" th:if="${#fields.hasErrors('password')}" th:text="#{weekPassword}"></p>
-                    </div>
+                        <div class="mb-2">
+                            <label for="username" th:text="#{username}"></label>
+                            <input type="text" class="form-control" th:field="*{username}" id="username"/>
+                            <p class="error-message" th:if="${#fields.hasErrors('username')}" th:text="#{incorrectUsername}"></p>
+                            <p class="error-message" th:if="${#request.getAttribute('userAlreadyExistsError')}" th:text="#{usernameIsOccupied}"></p>
+                        </div>
 
-                    <div class="mb-2">
-                        <label for="passwordCopy" th:text="#{repeatPassword}"></label>
-                        <input type="password" class="form-control" th:field="*{passwordCopy}" id="passwordCopy"/>
-                        <p class="error-message" th:if="${#fields.hasErrors('passwordCopy')}" th:text="#{secondPasswordDoesntMatchPattern}"></p>
-                        <p class="error-message" th:if="${#request.getAttribute('passwordsDontMatch')}" th:text="#{passwordsDontMatch}"></p>
-                    </div>
+                        <div class="mb-2">
+                            <label for="password" th:text="#{password}"></label>
+                            <input type="password" class="form-control" th:field="*{password}" id="password"/>
+                            <p class="error-message" th:if="${#fields.hasErrors('password')}" th:text="#{weekPassword}"></p>
+                        </div>
 
-                    <div class="mb-2">
-                        <label for="email" th:text="#{email}"></label>
-                        <input type="email" class="form-control" th:field="*{email}" id="email"/>
-                        <p class="error-message" th:if="${#fields.hasErrors('email')}" th:text="#{incorrectEmail}"></p>
-                    </div>
+                        <div class="mb-2">
+                            <label for="passwordCopy" th:text="#{repeatPassword}"></label>
+                            <input type="password" class="form-control" th:field="*{passwordCopy}" id="passwordCopy"/>
+                            <p class="error-message" th:if="${#fields.hasErrors('passwordCopy')}" th:text="#{secondPasswordDoesntMatchPattern}"></p>
+                            <p class="error-message" th:if="${#request.getAttribute('passwordsDontMatch')}" th:text="#{passwordsDontMatch}"></p>
+                        </div>
 
-                    <div class="mb-2">
-                        <label for="birthday" th:text="#{birthday}"></label>
-                        <input type="date" class="form-control" th:field="*{birthday}" id="birthday"/>
-                        <p class="error-message" th:if="${#fields.hasErrors('birthday')}" th:text="#{incorrectBirthday}"></p>
-                    </div>
+                        <div class="mb-2">
+                            <label for="email" th:text="#{email}"></label>
+                            <input type="email" class="form-control" th:field="*{email}" id="email"/>
+                            <p class="error-message" th:if="${#fields.hasErrors('email')}" th:text="#{incorrectEmail}"></p>
+                        </div>
 
-                    <div class="mb-4">
-                        <label for="taxNumber" th:text="#{taxNumber}"></label>
-                        <input type="text" class="form-control" th:field="*{taxNumber}" id="taxNumber"/>
-                        <p class="error-message" th:if="${#fields.hasErrors('taxNumber')}" th:text="#{emptyTaxNumber}"></p>
-                        <p class="error-message" th:if="${#request.getAttribute('taxNumberAlreadyExistsError')}" th:text="#{taxNumberAlreadyExists}"></p>
-                    </div>
+                        <div class="mb-2">
+                            <label for="birthday" th:text="#{birthday}"></label>
+                            <input type="date" class="form-control" th:field="*{birthday}" id="birthday"/>
+                            <p class="error-message" th:if="${#fields.hasErrors('birthday')}" th:text="#{incorrectBirthday}"></p>
+                        </div>
 
-                    <div class="text-center"><input type="submit" th:value="#{registerButton}" class="btn px-5 mb-2 w-100"></div>
+                        <div class="mb-4">
+                            <label for="taxNumber" th:text="#{taxNumber}"></label>
+                            <input type="text" class="form-control" th:field="*{taxNumber}" id="taxNumber"/>
+                            <p class="error-message" th:if="${#fields.hasErrors('taxNumber')}" th:text="#{emptyTaxNumber}"></p>
+                            <p class="error-message" th:if="${#request.getAttribute('taxNumberAlreadyExistsError')}" th:text="#{taxNumberAlreadyExists}"></p>
+                        </div>
 
-                    <div class="form-text text-center mb-1">
-                        <span th:text="#{alreadyHaveAnAccount}"></span><a th:href="@{/login}" th:text="#{login}" class="login-link"></a>
-                    </div>
-                </form>
+                        <div class="text-center"><input type="submit" th:value="#{registerButton}" class="btn px-5 mb-2 w-100"></div>
 
+                        <div class="form-text text-center mb-1">
+                            <span th:text="#{alreadyHaveAnAccount}"></span><a th:href="@{/login}" th:text="#{login}" class="login-link"></a>
+                        </div>
+                    </form>
+
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <footer class="page-footer dark-text">
+        <div class="footer-copyright text-center">
+            Copyright © 2022
+            <a href="https://www.instagram.com/oleh_chui">Chui Oleh</a>
+        </div>
+    </footer>
+
+    <script type="text/javascript" th:src="@{/js/changeLanguage.js}"></script>
 </body>
 </html>

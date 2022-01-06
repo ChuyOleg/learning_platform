@@ -26,35 +26,35 @@ public class RegistrationController {
     }
 
     @GetMapping()
-    public String newPerson(Model model) {
+    public String getRegistrationPage(Model model) {
         model.addAttribute("person", new PersonDTO());
 
         return "registration";
     }
 
     @PostMapping()
-    public String addNewPerson(Model model, @ModelAttribute("person") @Valid PersonDTO person,
+    public String addNewPerson(Model model, @ModelAttribute("person") @Valid PersonDTO personDTO,
                                BindingResult result) {
         if (result.hasErrors()) {
             return "registration";
         }
 
-        if (!person.getPassword().equals(person.getPasswordCopy())) {
+        if (!personDTO.getPassword().equals(personDTO.getPasswordCopy())) {
             model.addAttribute("passwordsDontMatch", true);
             return "registration";
         }
 
-        if (personService.isPersonAlreadyExistByUsername(person.getUsername())) {
+        if (personService.isPersonAlreadyExistByUsername(personDTO.getUsername())) {
             model.addAttribute("userAlreadyExistsError", true);
             return "registration";
         }
 
-        if (personDetailsService.isTaxNumberAlreadyExist(person.getTaxNumber())) {
+        if (personDetailsService.isTaxNumberAlreadyExist(personDTO.getTaxNumber())) {
             model.addAttribute("taxNumberAlreadyExistsError", true);
             return "registration";
         }
 
-        personService.createUser(person);
+        personService.createUser(personDTO);
         return "redirect:/person";
     }
 
