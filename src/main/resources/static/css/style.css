@@ -1,3 +1,26 @@
+/*******   GENERAL STYLE   ********/
+/*******************************/
+button.btn {
+    background: #8cc3ff;
+}
+
+button.btn:hover {
+    background: dodgerblue;
+}
+
+button.delete-button {
+    background: #ff4646;
+}
+
+button.delete-button:hover {
+    background: red;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+}
+
 /*******   LOGIN PAGE   ********/
 /*******************************/
 
@@ -25,25 +48,11 @@ body.login-page .login-form input.btn:hover {
     background: dodgerblue;
 }
 
-body.login-page .error-message {
-    color: red;
-    font-weight: bold;
-}
-
 body.login-page .sign-up-link {
     text-decoration: none;
     font-weight: bold;
     color: cornflowerblue;
     font-style: italic;
-}
-
-body.login-page .language-button {
-    width: 30%;
-    background: #8cc3ff;
-}
-
-body.login-page .language-button:hover {
-    background: dodgerblue;
 }
 
 /*******   REGISTRATION PAGE   ********/
@@ -66,11 +75,6 @@ body.registration-page .registration-form input.btn:hover {
     background: dodgerblue;
 }
 
-body.registration-page .error-message {
-    color: red;
-    font-weight: bold;
-}
-
 body.registration-page .login-link {
     text-decoration: none;
     font-weight: bold;
@@ -78,14 +82,6 @@ body.registration-page .login-link {
     font-style: italic;
 }
 
-body.registration-page .language-button {
-    width: 30%;
-    background: #8cc3ff;
-}
-
-body.registration-page .language-button:hover {
-    background: dodgerblue;
-}
 
 /*******   CREATING COURSE (info)   ********/
 /*******************************************/
@@ -110,3 +106,15 @@ footer.page-footer a {
     color: navajowhite;
 }
 
+
+/*******   CHANGE LANGUAGE BUTTON   ********/
+/*******************************************/
+
+button.language-button {
+    width: 30%;
+    background: #8cc3ff;
+}
+
+button.language-button:hover {
+    background: dodgerblue;
+}

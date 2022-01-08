@@ -2,6 +2,7 @@ package com.oleh.chui.learning_platform.dto;
 
 import lombok.*;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ public class CourseDTO {
     private String category;
 
     @NotNull
+    @DecimalMin(value = "0.0")
     private BigDecimal price;
 
     @NotBlank
