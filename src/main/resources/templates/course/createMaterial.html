@@ -11,7 +11,8 @@
 <body class="create-material-page">
 <div class="container">
     <form th:action="@{/course/material/new}" method="post"
-          class="card-body create-material-form p-lg-4" novalidate id="create-material-form">
+          class="card-body create-material-form p-lg-4" novalidate id="create-material-form"
+          th:object="${materialDtoList}">
 
         <div class="row">
             <div class="col-md-6 offset-md-3">
@@ -26,9 +27,11 @@
                 <p class="error-message text-center" th:if="${#request.getAttribute('materialIsEmptyError')}" th:text="#{materialIsEmptyError}"></p>
 
                 <div class="mb-2" id="material-list-wrapper">
-                    <div th:each="material: ${materialList}">
-                        <div class="mb-4 text-center create-material-div">
-                            <textarea name="material" cols="60" rows="10" th:text="${material}"></textarea>
+                    <div th:each="materialDTO, itemStat : *{materialDTOList}">
+                        <div class="mb-4 text-center create-material-div" th:id="'material-block-' + ${itemStat.index}">
+                            <textarea name="material" style="width: 100%" rows="10"
+                                      th:field="*{materialDTOList[__${itemStat.index}__].material}">
+                            </textarea>
                             <button type="button" class="btn delete-button" th:text="#{deleteMaterialButton}"></button>
                         </div>
                     </div>
@@ -39,6 +42,7 @@
                 </div>
 
                 <div class="text-center mb-4">
+                    <a class="btn previous-page" role="button" th:href="@{/course/new}" th:text="#{previousPageButton}"></a>
                     <button type="submit" class="btn" th:text="#{continueButton}"></button>
                 </div>
 

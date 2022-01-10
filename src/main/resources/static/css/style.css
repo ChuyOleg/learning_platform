@@ -21,6 +21,14 @@ button.delete-button:hover {
     font-weight: bold;
 }
 
+a.previous-page {
+    background: #8cc3ff;
+}
+
+a.previous-page:hover {
+    background: dodgerblue;
+}
+
 /*******   LOGIN PAGE   ********/
 /*******************************/
 
@@ -83,9 +91,45 @@ body.registration-page .login-link {
 }
 
 
-/*******   CREATING COURSE (info)   ********/
+/*******   CREATE COURSE INFO PAGE   *******/
 /*******************************************/
 
+body.create-course-page {
+    background-image: url("../img/create_course_background.jpg");
+    background-size: cover;
+}
+
+
+/*********   CREATE MATERIALS PAGE  ********/
+/*******************************************/
+
+body.create-material-page {
+    background-image: url("../img/create_course_background.jpg");
+    background-size: cover;
+}
+
+
+/********   CREATE QUESTIONS PAGE   ********/
+/*******************************************/
+
+body.create-question-page {
+    background-image: url("../img/create_course_background.jpg");
+    background-size: cover;
+}
+
+body.create-question-page .create-question-div {
+    background: #cbc99d;
+}
+
+button.create-course-button {
+    background: limegreen;
+}
+
+button.create-course-button:hover {
+    background: darkgreen;
+    color: white;
+    border-color: black;
+}
 
 
 /*******   FOOTER   ********/
@@ -117,4 +161,12 @@ button.language-button {
 
 button.language-button:hover {
     background: dodgerblue;
+}
+
+/*******   CATALOG PAGE   ********/
+/*******************************************/
+
+body.catalog-page {
+    background-image: url("../img/create_course_background.jpg");
+    background-size: cover;
 }

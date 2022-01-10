@@ -18,9 +18,14 @@ public class Material {
 
     private String data;
 
+    @ToString.Exclude
     @NonNull
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
+
+    public Material(String data) {
+        this.data = data;
+    }
 
 }

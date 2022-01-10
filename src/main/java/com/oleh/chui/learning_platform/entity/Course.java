@@ -1,9 +1,7 @@
 package com.oleh.chui.learning_platform.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import com.oleh.chui.learning_platform.dto.CourseDTO;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -14,6 +12,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Course {
 
     @Id
@@ -37,6 +36,8 @@ public class Course {
     @Column(name = "is_active")
     private boolean isActive;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "creator_id")
     private Person creator;
@@ -47,6 +48,21 @@ public class Course {
     @OneToMany(mappedBy = "course")
     private Set<Question> questionSet;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "selectedCourses")
     private Set<Person> students;
+
+    public Course(CourseDTO courseDTO, Set<Material> materialSet,
+                  Set<Question> questionSet, Person creator) {
+        this.name = courseDTO.getName();
+        this.description = courseDTO.getDescription();
+        this.category = courseDTO.getCategory();
+        this.price = courseDTO.getPrice();
+        this.language = courseDTO.getLanguage();
+        this.isActive = true;
+        this.creator = creator;
+        this.materialSet = materialSet;
+        this.questionSet = questionSet;
+    }
 }

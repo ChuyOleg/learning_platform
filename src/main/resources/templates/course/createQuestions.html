@@ -10,8 +10,9 @@
 </head>
 <body class="create-question-page">
 <div class="container">
-    <form th:action="@{/course/material/save}" method="post"
-          class="card-body create-question-form p-lg-4" novalidate id="create-question-form">
+    <form th:action="@{/course/question/new}" method="post"
+          class="card-body create-question-form p-lg-4" novalidate id="create-question-form"
+          th:object="${questionDtoList}">
 
         <div class="row">
             <div class="col-md-6 offset-md-3">
@@ -23,11 +24,39 @@
 
                 <h2 class="text-center text-dark mt-5" th:text="#{addQuestionPage}"></h2><br>
 
-                <div class="mb-2" id="material-list-wrapper">
-                    <div th:each="material: ${questionList}">
-                        <div class="mb-4 text-center create-material-div">
-                            <textarea name="material" cols="60" rows="3" th:text="${question}"></textarea>
-                            <button type="button" class="btn delete-button" th:text="#{deleteMaterialButton}"></button>
+                <p class="error-message text-center" th:if="${#request.getAttribute('questionIsEmptyError')}" th:text="#{questionIsEmptyError}"></p>
+                <p class="error-message text-center" th:if="${#request.getAttribute('answerTextIsEmptyError')}" th:text="#{answerTextIsEmptyError}"></p>
+                <p class="error-message text-center" th:if="${#request.getAttribute('answerRadioIsEmptyError')}" th:text="#{answerRadioIsEmptyError}"></p>
+                <p class="error-message text-center" th:if="${#request.getAttribute('zeroQuestionsError')}" th:text="#{zeroQuestionsError}"></p>
+
+                <div class="mb-2" id="question-list-wrapper">
+                    <div th:each="question, itemStat : *{questionDTOList}">
+                        <div class="mb-4 pt-4 pb-3 text-center create-question-div" th:id="'question-block-' + ${itemStat.index}">
+                            <p th:text="#{question}"></p>
+                            <textarea style="min-width: 95%" rows="3" th:field="*{questionDTOList[__${itemStat.index}__].question}"></textarea>
+
+                            <p th:text="#{answersText}"></p>
+                            <textarea class="text-center" style="width: 30%" th:field="*{questionDTOList[__${itemStat.index}__].answer1}"></textarea>
+                            <textarea class="text-center" style="width: 30%" th:field="*{questionDTOList[__${itemStat.index}__].answer2}"></textarea>
+                            <textarea class="text-center" style="width: 30%" th:field="*{questionDTOList[__${itemStat.index}__].answer3}"></textarea>
+                            <br>
+
+                            <p th:text="#{answersRadio}"></p>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" th:field="*{questionDTOList[__${itemStat.index}__].correctAnswer}" type="radio" name="correctAnswerNumber" value="answer1">
+                                <label class="form-check-label">1</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" th:field="*{questionDTOList[__${itemStat.index}__].correctAnswer}" type="radio" name="correctAnswerNumber" value="answer2">
+                                <label class="form-check-label">2</label>
+                            </div>
+                            <div class="form-check form-check-inline mb-2">
+                                <input class="form-check-input" th:field="*{questionDTOList[__${itemStat.index}__].correctAnswer}" type="radio" name="correctAnswerNumber" value="answer3">
+                                <label class="form-check-label" for="inlineRadio3">3</label>
+                            </div>
+                            <br>
+
+                            <button type="button" class="btn delete-button" th:text="#{deleteQuestionButton}"></button>
                         </div>
                     </div>
                 </div>
@@ -37,7 +66,8 @@
                 </div>
 
                 <div class="text-center mb-4">
-                    <button type="submit" class="btn" th:text="#{continueButton}"></button>
+                    <a class="btn previous-page" role="button" th:href="@{/course/material/new}" th:text="#{previousPageButton}"></a>
+                    <button type="submit" class="btn create-course-button" th:text="#{createCourseButton}"></button>
                 </div>
 
             </div>

@@ -34,15 +34,15 @@ public class Person implements UserDetails {
 
     @NonNull
     @Enumerated(EnumType.STRING)
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_details_id", referencedColumnName = "id")
     private PersonDetails personDetails;
-    @OneToMany(mappedBy = "creator")
+    @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
     private Set<Course> courseSet;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "person_learn_course",
             joinColumns = @JoinColumn(name = "student_id"),

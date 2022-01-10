@@ -1,9 +1,6 @@
 package com.oleh.chui.learning_platform.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -14,6 +11,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Question {
 
     @Id
@@ -25,9 +23,14 @@ public class Question {
     @OneToMany(mappedBy = "question")
     private Set<Answer> answerSet;
 
-    @NonNull
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
+
+    public Question(String question, Set<Answer> answerSet) {
+        this.question = question;
+        this.answerSet = answerSet;
+    }
 
 }

@@ -1,17 +1,15 @@
 package com.oleh.chui.learning_platform.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "answers")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Data
 public class Answer {
 
     @Id
@@ -23,9 +21,14 @@ public class Answer {
     @Column(name = "is_correct")
     private boolean isCorrect;
 
-    @NonNull
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;
+
+    public Answer(String answer, boolean isCorrect) {
+        this.answer = answer;
+        this.isCorrect = isCorrect;
+    }
 
 }
