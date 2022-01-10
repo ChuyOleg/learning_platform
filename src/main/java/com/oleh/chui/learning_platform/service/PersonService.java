@@ -32,7 +32,7 @@ public class PersonService implements UserDetailsService {
         return personRepository.findAll();
     }
 
-    public void createUser(PersonDTO personDTO) {
+    public Person createAndGetUser(PersonDTO personDTO) {
         Person person = new Person(personDTO);
         Role role = roleService.getRoleAndCreateIfNeed(Role.RoleEnum.USER);
         PersonDetails personDetails = PersonDetails.builder()
@@ -41,7 +41,7 @@ public class PersonService implements UserDetailsService {
         person.setPersonDetails(personDetails);
         person.setPassword(passwordEncoder.encode(person.getPassword()));
 
-        personRepository.save(person);
+        return personRepository.save(person);
     }
 
     public boolean isPersonAlreadyExistByUsername(String username) {

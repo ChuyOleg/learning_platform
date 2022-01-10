@@ -17,13 +17,16 @@ import javax.validation.Valid;
 import java.util.List;
 
 // TODO
-// add (do login) user after registration
 // add logger
 // add tests
 // think front validation
-// create header
 // catalog shows all excluded if user is creator or course is paid
+// div size in header
+// course description set textarea
 // decompose this controller
+// update activeUserInfo in SecuritySession after every update
+// check SecurityConfig permissions for all URLs
+// add free course and implement this logic
 
 @Controller
 @RequestMapping("/course")
@@ -33,6 +36,26 @@ public class CourseController {
 
     public CourseController(CourseService courseService) {
         this.courseService = courseService;
+    }
+
+    @GetMapping("/createdCourses")
+    public String getCreatedCoursesPage(Model model) {
+        Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        get created courses by userId
+
+        model.addAttribute("courseList", activeUser.getCourseSet());
+
+        return "course/createdCourses";
+    }
+
+    @GetMapping("/purchased")
+    public String getPurchasedCoursesPage(Model model) {
+        Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//          get selected courses by userId
+
+        model.addAttribute("courseList", activeUser.getSelectedCourses());
+
+        return "course/purchasedCourses";
     }
 
     @GetMapping("/new")
@@ -50,9 +73,8 @@ public class CourseController {
 
 
     @PostMapping("/new")
-    public String addCourseInfoToSession(HttpSession session, Model model,
-                                                @ModelAttribute("course") @Valid CourseDTO courseDTO,
-                                                BindingResult result) {
+    public String addCourseInfoToSession(HttpSession session, @ModelAttribute("course") @Valid CourseDTO courseDTO,
+                                         BindingResult result) {
 
         if (result.hasErrors()) {
             return "course/createCourseBaseInfo";

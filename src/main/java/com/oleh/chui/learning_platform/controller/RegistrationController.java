@@ -1,8 +1,12 @@
 package com.oleh.chui.learning_platform.controller;
 
 import com.oleh.chui.learning_platform.dto.PersonDTO;
+import com.oleh.chui.learning_platform.entity.Person;
 import com.oleh.chui.learning_platform.service.PersonDetailsService;
 import com.oleh.chui.learning_platform.service.PersonService;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -54,8 +58,16 @@ public class RegistrationController {
             return "registration";
         }
 
-        personService.createUser(personDTO);
-        return "redirect:/person";
+        Person user = personService.createAndGetUser(personDTO);
+        autoAuth(user);
+
+        return "redirect:/course/all";
+    }
+
+    private void autoAuth(Person user) {
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
 }

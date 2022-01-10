@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <title th:text="#{siteName}"></title>
@@ -9,6 +11,34 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body class="catalog-page">
+
+<header class="blog-header text-center" th:if="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <div class="tab text-center">
+        <a th:href="@{/course/all}" th:text="#{catalogTab}"></a>
+    </div>
+    <div class="tab text-center">
+        <a th:href="@{/course/purchased}" th:text="#{purchasedCoursesTab}"></a>
+    </div>
+    <div class="tab text-center">
+        <a th:href="@{/course/createdCourses}" th:text="#{myCoursesTab}"></a>
+    </div>
+    <div class="login-or-logout-wrapper text-center">
+        <a th:href="@{/logout}" th:text="#{logoutTab}" sec:authorize="isAuthenticated()"></a>
+        <a th:href="@{/login}" th:text="#{loginTab}" sec:authorize="isAnonymous()"></a>
+    </div>
+</header>
+
+<header class="blog-header text-center" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <div class="tab text-center">
+        <a th:href="@{/course/all}" th:text="#{catalogTab}"></a>
+    </div>
+    <div class="tab text-center">
+        <a th:href="@{/course/users}" th:text="#{usersTab}"></a>
+    </div>
+    <div class="login-or-logout-wrapper text-center">
+        <a th:href="@{/logout}" th:text="#{logoutTab}"></a>
+    </div>
+</header>
 
     <div class="container">
         <div class="row">
