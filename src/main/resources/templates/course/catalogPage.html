@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
     <title th:text="#{siteName}"></title>
@@ -9,13 +11,50 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body class="catalog-page">
-    <div class="container">
+
+<header class="blog-header text-center" th:if="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <div class="tab text-center">
+        <a th:href="@{/course/all}">Catalog</a>
+    </div>
+    <div class="tab text-center">
+        <a th:href="@{/course/purchased}">Purchased courses</a>
+    </div>
+    <div class="tab text-center">
+        <a th:href="@{/course/owner}">My courses</a>
+    </div>
+    <div class="login-or-logout-wrapper text-center">
+        <a th:href="@{/logout}" sec:authorize="isAuthenticated()">Log out</a>
+        <a th:href="@{/login}" sec:authorize="isAnonymous()">Log in</a>
+    </div>
+</header>
+
+<header class="blog-header text-center" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <div class="tab text-center">
+        <a th:href="@{/course/all}">Catalog</a>
+    </div>
+    <div class="tab text-center">
+        <a th:href="@{/course/purchased}">Users</a>
+    </div>
+    <div class="login-or-logout-wrapper text-center">
+        <a th:href="@{/logout}">Log out</a>
+    </div>
+</header>
+
+<div class="container px-4">
         <div class="row">
-            <div class="col-sm-5 border text-center mt-4" th:each="course : *{courseList}">
-                <p th:text="${course.name}"></p>
-                <p th:text="${course.category}"></p>
-                <p th:text="${course.language}"></p>
-                <p th:text="${course.price}"></p>
+            <div class="text-center">
+                <button type="button" class="btn language-button" th:text="#{english}" id="englishLanguageButton"></button>
+                <button type="button" class="btn language-button" th:text="#{ukrainian}" id="ukrainianLanguageButton"></button>
+            </div>
+
+            <div class="col-md-4 col-sm-6 mt-4 mb-4" th:each="course : *{courseList}">
+                <div class="text-center">
+                    <div class="border border-dark p-2 catalog-field course-name" th:text="${course.name}"></div>
+                    <div class="border border-dark p-2 catalog-field" th:text="#{${course.category}}"></div>
+                    <div class="border border-dark p-2 catalog-field" th:text="#{${course.language}}"></div>
+                    <div class="border border-dark p-2 catalog-field" th:text="${course.price + '$'}"></div>
+                    <a class="btn show-details-button btn-primary form-control" role="button" th:href="@{/course/{id}(id=${course.id})}" th:text="#{seeDetailsButton}"></a>
+                </div>
             </div>
         </div>
     </div>

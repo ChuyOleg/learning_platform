@@ -131,8 +131,49 @@ button.create-course-button:hover {
     border-color: black;
 }
 
+/**********   HEADER   *********/
+/*******************************/
 
-/*******   FOOTER   ********/
+header {
+    display: flex;
+    border: 1px solid black;
+    justify-content: center;
+    background: #221921;
+}
+
+header .tab a {
+    background: #f5f5f5;
+    display: inline-block;
+    color: #221921;
+    padding: 10px 20px;
+    text-decoration: none;
+    border: 1px solid #221921;
+}
+
+header .tab a:hover {
+    background: dodgerblue;
+}
+
+div.login-or-logout-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 2px solid black;
+    background: cadetblue;
+}
+
+div.login-or-logout-wrapper:hover {
+    background: dodgerblue;
+}
+
+div.login-or-logout-wrapper a {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: black;
+}
+
+/*********   FOOTER   **********/
 /*******************************/
 
 footer.page-footer {
@@ -140,7 +181,6 @@ footer.page-footer {
     height: 6.8vh;
     padding-top: 1.6vh;
     padding-bottom: 1.6vh;
-    color: white;
     margin-top: auto;
 }
 
@@ -148,6 +188,10 @@ footer.page-footer a {
     text-decoration: none;
     font-weight: bold;
     color: navajowhite;
+}
+
+footer .footer-copyright {
+    color: #198754;
 }
 
 
@@ -169,4 +213,12 @@ button.language-button:hover {
 body.catalog-page {
     background-image: url("../img/create_course_background.jpg");
     background-size: cover;
+}
+
+body.catalog-page .catalog-field {
+    background: #e5d5b9 ;
+}
+
+body.catalog-page .course-name {
+    background: #e1bb76;
 }

@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .and()
                 .formLogin(form -> form
-                        .defaultSuccessUrl("/person")
+                        .defaultSuccessUrl("/course/all")
                         .loginPage("/login")
                         .failureUrl("/login?error=true"));
 

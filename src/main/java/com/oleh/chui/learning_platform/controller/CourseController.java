@@ -4,29 +4,26 @@ import com.oleh.chui.learning_platform.dto.*;
 import com.oleh.chui.learning_platform.entity.Course;
 import com.oleh.chui.learning_platform.entity.Person;
 import com.oleh.chui.learning_platform.service.CourseService;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 
 // TODO
-// implement creating course
-// clear session after creating course
 // add (do login) user after registration
-// do one general validation before creating course
-// think about toString methods
-// change language selection via creating course language
 // add logger
 // add tests
 // think front validation
 // create header
+// catalog shows all excluded if user is creator or course is paid
+// decompose this controller
 
 @Controller
 @RequestMapping("/course")
@@ -125,42 +122,43 @@ public class CourseController {
     }
 
     @PostMapping("/question/new")
-    public String saveCourse(HttpSession session, Model model, WebRequest webRequest,
+    public String saveCourse(HttpSession session, Model model, WebRequest webRequest, RedirectAttributes redirectAttributes,
                              @ModelAttribute("questionDtoList") @Valid QuestionDtoList questionDtoList,
                              BindingResult result) {
 
         for (QuestionDTO questionDTO : questionDtoList.getQuestionDTOList()) {
-            if (questionDTO.getQuestion().isEmpty()) {
-                model.addAttribute("questionIsEmptyError", true);
-                return "course/createQuestions";
-            } else if (questionDTO.getAnswer1().isEmpty() || questionDTO.getAnswer2().isEmpty() || questionDTO.getAnswer3().isEmpty()) {
-                model.addAttribute("answerTextIsEmptyError", true);
-                return "course/createQuestions";
-            } else if (questionDTO.getCorrectAnswer() == null) {
-                model.addAttribute("answerRadioIsEmptyError", true);
-                return "course/createQuestions";
-            }
+            if (questionDTO.getQuestion().isEmpty())
+                return getQuestionPageWithQuestionIsEmptyErrorMessage(model);
+            else if (questionDTO.getAnswer1().isEmpty() || questionDTO.getAnswer2().isEmpty() || questionDTO.getAnswer3().isEmpty())
+                return getQuestionPageWithAnswerTextIsEmptyErrorMessage(model);
+            else if (questionDTO.getCorrectAnswer() == null)
+                return getQuestionPageWithAnswerRadioIsEmptyErrorMessage(model);
         }
 
-        if (result.hasErrors()) {
-            QuestionDtoList defaultQuestionDtoList = new QuestionDtoList();
-            defaultQuestionDtoList.addQuestionDTO(new QuestionDTO("", "", "", "", ""));
-            model.addAttribute("zeroQuestionsError", true);
-            model.addAttribute("questionDtoList", defaultQuestionDtoList);
-            return "course/createQuestions";
+        if (result.hasErrors())
+            return getQuestionPageWithZeroQuestionsErrorMessage(model);
+
+        session.setAttribute("questionDtoList", questionDtoList);
+        CourseDTO courseDTO = (CourseDTO) session.getAttribute("courseDTO");
+        MaterialDtoList materialDtoList = (MaterialDtoList) session.getAttribute("materialDtoList");
+        Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        String validateResult = validateCourseInfoAndMaterials(courseDTO, materialDtoList);
+        if (validateResult.equals("courseBaseInfoIsEmptyError")) {
+            return getRedirectedCourseBaseInfoPageWithErrorMessage(redirectAttributes);
+        } else if (validateResult.equals("materialIsEmptyError")) {
+            return getRedirectedMaterialPageWithErrorMessage(redirectAttributes);
         } else {
-            CourseDTO courseDTO = (CourseDTO) session.getAttribute("courseDTO");
-            MaterialDtoList materialDtoList = (MaterialDtoList) session.getAttribute("materialDtoList");
-            session.setAttribute("questionDtoList", questionDtoList);
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Person customUser = (Person) authentication.getPrincipal();
-
-            courseService.saveCourse(courseDTO, materialDtoList, questionDtoList, customUser);
-
-            clearCourseCreatingInfoFromSession(webRequest);
+            courseService.saveCourse(courseDTO, materialDtoList, questionDtoList, activeUser);
+            clearCourseInfoFromSession(webRequest);
         }
 
-        return "person/all";
+        return "redirect:/course/created";
+    }
+
+    @GetMapping("/created")
+    public String getSuccessfullyCreationCoursePage() {
+        return "course/successfulCreationPage";
     }
 
     @GetMapping("/all")
@@ -171,10 +169,52 @@ public class CourseController {
         return "course/catalogPage";
     }
 
-    private void clearCourseCreatingInfoFromSession(WebRequest webRequest) {
+    private void clearCourseInfoFromSession(WebRequest webRequest) {
         webRequest.removeAttribute("courseDTO", WebRequest.SCOPE_SESSION);
         webRequest.removeAttribute("materialDtoList", WebRequest.SCOPE_SESSION);
         webRequest.removeAttribute("questionDtoList", WebRequest.SCOPE_SESSION);
+    }
+
+    private String getQuestionPageWithZeroQuestionsErrorMessage(Model model) {
+        QuestionDtoList defaultQuestionDtoList = new QuestionDtoList();
+        defaultQuestionDtoList.addQuestionDTO(new QuestionDTO("", "", "", "", ""));
+        model.addAttribute("zeroQuestionsError", true);
+        model.addAttribute("questionDtoList", defaultQuestionDtoList);
+        return "course/createQuestions";
+    }
+
+    private String getQuestionPageWithQuestionIsEmptyErrorMessage(Model model) {
+        model.addAttribute("questionIsEmptyError", true);
+        return "course/createQuestions";
+    }
+
+    private String getQuestionPageWithAnswerTextIsEmptyErrorMessage(Model model) {
+        model.addAttribute("answerTextIsEmptyError", true);
+        return "course/createQuestions";
+    }
+
+    private String getQuestionPageWithAnswerRadioIsEmptyErrorMessage(Model model) {
+        model.addAttribute("answerRadioIsEmptyError", true);
+        return "course/createQuestions";
+    }
+
+    private String getRedirectedCourseBaseInfoPageWithErrorMessage(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("courseBaseInfoIsEmptyError", true);
+        return "redirect:/course/new";
+    }
+
+    private String getRedirectedMaterialPageWithErrorMessage(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("materialIsEmptyError", true);
+        return "redirect:/course/material/new";
+    }
+
+    private String validateCourseInfoAndMaterials(CourseDTO courseDTO, MaterialDtoList materialDtoList) {
+        if (courseDTO == null)
+            return "courseBaseInfoIsEmptyError";
+        else if (materialDtoList == null)
+            return "materialIsEmptyError";
+        else
+            return "No errors";
     }
 
 }
