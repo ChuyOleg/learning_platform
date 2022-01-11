@@ -29,7 +29,7 @@ import java.util.Set;
 
 @Controller
 @RequestMapping("/course")
-public class  CourseController {
+public class CourseController {
 
     private final CourseService courseService;
 
@@ -80,6 +80,21 @@ public class  CourseController {
         model.addAttribute("course", course);
 
         return "course/detailsPage";
+    }
+
+    @PostMapping("/buy/{id}")
+    public String buyCourse(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Course course = courseService.getById(id);
+
+        if (activeUser.getPersonDetails().getMoney().compareTo(course.getPrice()) < 0) {
+            redirectAttributes.addFlashAttribute("notEnoughMoneyError", true);
+            return "redirect:/course/" + id;
+        }
+
+        courseService.userBuyCourse(activeUser, id);
+
+        return "redirect:/course/purchased";
     }
 
     @GetMapping("/all/filter")

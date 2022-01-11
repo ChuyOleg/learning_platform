@@ -13,6 +13,12 @@
 <body class="details-page">
 
 <header class="blog-header text-center" th:if="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <div class="balance-wrapper text-center" th:if="${#authorization.expression('hasAuthority(''USER'')')}">
+        <div class="balance">
+            <span th:text="#{balance}"></span><span th:text="${#authentication.getPrincipal().getPersonDetails().getMoney()}"></span>$
+        </div>
+        <button type="button" class="btn replenishBalanceButton" id="replenishBalanceButton">+</button>
+    </div>
     <div class="tab text-center">
         <a th:href="@{/course/all}" th:text="#{catalogTab}"></a>
     </div>
@@ -26,6 +32,14 @@
         <a th:href="@{/logout}" th:text="#{logoutTab}" sec:authorize="isAuthenticated()"></a>
         <a th:href="@{/login}" th:text="#{loginTab}" sec:authorize="isAnonymous()"></a>
     </div>
+    <form class="replenishForm" th:action="@{/replenishBalance}" novalidate method="post" id="replenishBalanceForm">
+        <label for="replenishment" th:text="#{specifySumOfReplenishment}"></label><br><br>
+        <input class="form-control" name="replenishment" type="number" required min="0"
+               id="replenishment"><br>
+        <p class="error-message" th:text="#{replenishmentError}" id="replenishmentError"></p>
+        <button type="button" class="btn ok-button" th:text="#{ok}" id="ok-button"></button>
+        <button type="button" class="btn cancel-button" th:text="#{cancel}" id="cancel-button"></button>
+    </form>
 </header>
 
 <header class="blog-header text-center" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
@@ -50,6 +64,7 @@
 
         <form class="col-8 offset-2 mt-4 mb-4" th:action="@{/course/buy/{id}(id=${course.id})}" method="post" th:object="${course}">
             <div class="text-center">
+                <p class="error-message text-center" th:if="${#request.getAttribute('notEnoughMoneyError')}" th:text="#{notEnoughMoneyError}"></p>
                 <div class="border border-dark p-2 catalog-field course-name" th:text="*{name}"></div>
                 <div class="border border-dark p-2 catalog-field" th:text="*{description}"></div>
                 <div class="border border-dark p-2 catalog-field" th:text="#{*{category}}"></div>
@@ -58,9 +73,9 @@
                 <div class="border border-dark p-2 catalog-field" th:if="*{price == 0}" th:text="#{free}"></div>
                 <button type="submit" class="btn form-control buy-button" sec:authorize="isAnonymous()" th:text="#{buyButton}"></button>
                 <div sec:authorize="isAuthenticated()">
-                    <button type="submit" class="btn form-control buy-button"
-                            th:if="${course.creator.id!=#authentication.getPrincipal().getId()}" th:text="#{buyButton}">
-
+                    <button  type="submit" class="btn form-control buy-button"
+                            th:if="${course.creator.id!=#authentication.getPrincipal().getId() && #authorization.expression('hasAuthority(''USER'')')
+                             && !#authentication.getPrincipal().getSelectedCourses().contains(course)}" th:text="#{buyButton}">
                     </button>
                 </div>
             </div>
@@ -77,5 +92,6 @@
 </footer>
 
 <script type="text/javascript" th:src="@{/js/changeLanguage.js}"></script>
+<script type="text/javascript" th:src="@{/js/replenishBalance.js}"></script>
 </body>
 </html>

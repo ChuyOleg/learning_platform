@@ -36,6 +36,10 @@ public class PersonService implements UserDetailsService {
         return personRepository.findPersonById(id).orElse(new Person());
     }
 
+    public void save(Person person) {
+        personRepository.save(person);
+    }
+
     public Person createAndGetUser(PersonDTO personDTO) {
         Person person = new Person(personDTO);
         Role role = roleService.getRoleAndCreateIfNeed(Role.RoleEnum.USER);
@@ -60,7 +64,7 @@ public class PersonService implements UserDetailsService {
         return person.orElseThrow(() -> new UsernameNotFoundException("Not found " + username));
     }
 
-    public void replenishBalance(Person activeUser, BigDecimal replenishment) {
+    public void changeBalance(Person activeUser, BigDecimal replenishment) {
         Optional<Person> personOptional = personRepository.findPersonById(activeUser.getId());
         if (personOptional.isPresent()) {
             Person person = personOptional.get();

@@ -2,7 +2,6 @@ package com.oleh.chui.learning_platform.controller;
 
 import com.oleh.chui.learning_platform.entity.Person;
 import com.oleh.chui.learning_platform.service.PersonService;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,9 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.security.Principal;
-import java.util.Collection;
-
 
 @Controller
 public class PersonController {
@@ -34,7 +30,7 @@ public class PersonController {
     public String getPersons(HttpServletRequest request, @RequestParam("replenishment") BigDecimal replenishment) {
         Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        personService.replenishBalance(activeUser, replenishment);
+        personService.changeBalance(activeUser, replenishment);
 
         String referer = request.getHeader("Referer");
         return "redirect:" + referer;

@@ -47,6 +47,18 @@ public class CourseService {
         courseRepository.save(course);
     }
 
+    public void userBuyCourse(Person activeUser, Long courseId) {
+        Person person = personService.getPersonById(activeUser.getId());
+        Course course = courseRepository.getById(courseId);
+
+        person.getSelectedCourses().add(course);
+
+        personService.changeBalance(activeUser, course.getPrice().negate());
+        activeUser.setSelectedCourses(person.getSelectedCourses());
+
+        personService.save(person);
+    }
+
     public List<Course> getAll() {
         return courseRepository.findAll();
     }
