@@ -26,7 +26,10 @@
                         <h2 class="text-center text-dark mt-5" th:text="#{enterYourCredentials}"></h2><br>
 
                         <div class="mb-3 text-center">
-                            <span class="error-message" th:if="${param.error}" th:text="#{authenticationError}"></span>
+                            <div class="error" th:if="${param.error}" th:with="errorMsg=${session['SPRING_SECURITY_LAST_EXCEPTION'].message}">
+                                <span class="error-message" th:if="${errorMsg.equals('User account is locked')}" th:text="#{accountIsBlocked}"></span>
+                                <span class="error-message" th:if="${!errorMsg.equals('User account is locked')}" th:text="#{authenticationError}"></span>
+                            </div>
                         </div>
 
                         <div class="mb-3">

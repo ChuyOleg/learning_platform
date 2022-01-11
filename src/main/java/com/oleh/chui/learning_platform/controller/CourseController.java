@@ -26,6 +26,7 @@ import java.util.Set;
 // think about making one table from Person and PersonDetails
 // before buying check if user is author or course is already buying
 // delete taxNumber because user can be 18 years younger
+// think about welcome page (URL = http://localhost:8080)
 
 @Controller
 @RequestMapping("/course")

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
 public class PersonController {
@@ -19,13 +20,6 @@ public class PersonController {
         this.personService = personService;
     }
 
-    @GetMapping()
-    public String getPersons(Model model) {
-        model.addAttribute("personList", personService.getAllPersons());
-
-        return "person/all";
-    }
-
     @PostMapping("/replenishBalance")
     public String getPersons(HttpServletRequest request, @RequestParam("replenishment") BigDecimal replenishment) {
         Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -34,6 +28,22 @@ public class PersonController {
 
         String referer = request.getHeader("Referer");
         return "redirect:" + referer;
+    }
+
+    @GetMapping("/users")
+    public String getUsersPage(Model model) {
+        List<Person> users = personService.getAllUsers();
+
+        model.addAttribute("userList", users);
+
+        return "/person/all";
+    }
+
+    @PostMapping("/users/{id}")
+    public String blockOrUnblockUser(@PathVariable("id") Long id) {
+        personService.blockOrUnblockUser(id);
+
+        return "redirect:/users";
     }
 
 }

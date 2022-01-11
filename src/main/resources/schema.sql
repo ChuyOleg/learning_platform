@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS persons (
     password varchar(256) NOT NULL ,
     email varchar(128) NOT NULL ,
     birthday date NOT NULL ,
+    blocked BOOLEAN NOT NULL DEFAULT FALSE,
     role_id int references roles(id) NOT NULL ,
     user_details_id int references user_details(id)
 );

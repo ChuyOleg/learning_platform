@@ -31,6 +31,8 @@ public class Person implements UserDetails {
     private String email;
     @NonNull
     private LocalDate birthday;
+    @NonNull
+    private Boolean blocked;
 
     @NonNull
     @Enumerated(EnumType.STRING)
@@ -70,7 +72,7 @@ public class Person implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !blocked;
     }
 
     @Override

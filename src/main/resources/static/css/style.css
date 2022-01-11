@@ -300,6 +300,32 @@ body.details-page .buy-button:hover {
     background: limegreen;
 }
 
+
+/*********   USERS PAGE   **********/
+/***********************************/
+
+.block-button {
+    background: limegreen !important;
+}
+
+.block-button:hover {
+    background: #f53636 !important;
+}
+
+.unblock-button {
+    background: #f53636 !important;
+}
+
+.unblock-button:hover {
+    background: limegreen !important;
+}
+
+.user-field {
+    background: #ede1f3;
+    font-weight: bold;
+}
+
+
 @media only screen and (max-width: 900px) {
     /*    HEADER      */
     header .tab a {

@@ -17,6 +17,7 @@ if (replenishBalanceButton != null) {
 
 if (cancelButton != null) {
     cancelButton.addEventListener("click", () => {
+        replenishmentInput.value = "";
         replenishmentError.style.display = "none";
         replenishBalanceForm.style.display = "none";
     })

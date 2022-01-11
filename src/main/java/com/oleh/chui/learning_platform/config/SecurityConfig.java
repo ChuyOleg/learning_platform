@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/admin").hasAuthority("ADMIN")
+                .antMatchers("/users").hasAuthority("ADMIN")
                 .antMatchers("/course/all").permitAll()
                 .antMatchers("/course/all/filter").permitAll()
                 .antMatchers("/course/new").hasAuthority("USER")
@@ -45,7 +45,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/course/purchased").hasAuthority("USER")
                 .antMatchers("/course/buy/*").hasAuthority("USER")
                 .antMatchers("/course/*").permitAll()
-                .antMatchers("/").permitAll()
                 .and()
             .exceptionHandling().accessDeniedPage("/course/all")
                 .and()

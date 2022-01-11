@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonService implements UserDetailsService {
@@ -28,8 +29,9 @@ public class PersonService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<Person> getAllPersons() {
-        return personRepository.findAll();
+    public List<Person> getAllUsers() {
+        List<Person> personList = personRepository.findAll();
+        return personList.stream().filter(person -> person.getRole().getRole().equals(Role.RoleEnum.USER)).collect(Collectors.toList());
     }
 
     public Person getPersonById(Long id) {
@@ -38,6 +40,12 @@ public class PersonService implements UserDetailsService {
 
     public void save(Person person) {
         personRepository.save(person);
+    }
+
+    public void blockOrUnblockUser(Long id) {
+        Person user = personRepository.getById(id);
+        user.setBlocked(!user.getBlocked());
+        personRepository.save(user);
     }
 
     public Person createAndGetUser(PersonDTO personDTO) {
