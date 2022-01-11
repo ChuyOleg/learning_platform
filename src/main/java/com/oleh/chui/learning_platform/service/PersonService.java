@@ -59,4 +59,14 @@ public class PersonService implements UserDetailsService {
 
         return person.orElseThrow(() -> new UsernameNotFoundException("Not found " + username));
     }
+
+    public void replenishBalance(Person activeUser, BigDecimal replenishment) {
+        Optional<Person> personOptional = personRepository.findPersonById(activeUser.getId());
+        if (personOptional.isPresent()) {
+            Person person = personOptional.get();
+            person.getPersonDetails().setMoney(person.getPersonDetails().getMoney().add(replenishment));
+            personRepository.save(person);
+            activeUser.getPersonDetails().setMoney(person.getPersonDetails().getMoney());
+        }
+    }
 }

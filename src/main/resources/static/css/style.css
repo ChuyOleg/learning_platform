@@ -145,7 +145,7 @@ header .tab a {
     background: #f5f5f5;
     display: inline-block;
     color: #221921;
-    padding: 10px 20px;
+    padding: 10px 30px;
     text-decoration: none;
     border: 1px solid #221921;
 }
@@ -171,6 +171,59 @@ div.login-or-logout-wrapper a {
     padding: 10px 20px;
     text-decoration: none;
     color: black;
+}
+
+div.balance-wrapper {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: cadetblue;
+}
+
+div.balance-wrapper .balance {
+    padding: 10px;
+    border: 1px solid black;
+}
+
+
+header .replenishBalanceButton {
+    font-weight: bold;
+    background: limegreen;
+    border: 1px solid black;
+    width: 45px;
+}
+
+header .replenishBalanceButton:hover {
+    font-weight: bold;
+    background: darkgreen;
+}
+
+header .replenishForm {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 40%;
+    background: white;
+    padding: 30px;
+    border-radius: 5px;
+    border: 2px solid black;
+}
+
+header .replenishForm .ok-button {
+    background: limegreen;
+}
+
+header .replenishForm .ok-button:hover {
+    background: darkgreen;
+}
+
+header .replenishForm .cancel-button {
+    background: #ff6740;
+}
+
+header .replenishForm .cancel-button:hover {
+    background: red;
 }
 
 /*********   FOOTER   **********/
@@ -207,7 +260,7 @@ button.language-button:hover {
     background: dodgerblue;
 }
 
-/*******   CATALOG PAGE   ********/
+/***********   CATALOG PAGE   **************/
 /*******************************************/
 
 body.catalog-page {
@@ -221,4 +274,35 @@ body.catalog-page .catalog-field {
 
 body.catalog-page .course-name {
     background: #e1bb76;
+}
+
+/***********   DETAILS PAGE   **************/
+/*******************************************/
+
+body.details-page {
+    background: url("../img/details_background.jpg");
+    background-size: cover;
+}
+
+body.details-page .catalog-field {
+    background: #e5d5b9 ;
+}
+
+body.details-page .course-name {
+    background: #e1bb76;
+}
+
+body.details-page .buy-button {
+    background: #97df29;
+}
+
+body.details-page .buy-button:hover {
+    background: limegreen;
+}
+
+@media only screen and (max-width: 900px) {
+    /*    HEADER      */
+    header .tab a {
+        padding: 10px 10px;
+    }
 }

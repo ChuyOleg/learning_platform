@@ -51,6 +51,10 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
+    public Course getById(Long id) {
+        return courseRepository.getById(id);
+    }
+
     public Set<Course> getAllByFilters(String category, String language, BigDecimal minPrice, BigDecimal maxPrice) {
         Set<Course> courseSet = new HashSet<>(getAll());
         return filterByPrice(filterByLanguage(filterByCategory(courseSet, category), language), minPrice, maxPrice);

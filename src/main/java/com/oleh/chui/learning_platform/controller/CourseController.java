@@ -23,11 +23,13 @@ import java.util.Set;
 // think front validation
 // decompose this controller
 // check SecurityConfig permissions for all URLs
-// add user balance
+// think about making one table from Person and PersonDetails
+// before buying check if user is author or course is already buying
+// delete taxNumber because user can be 18 years younger
 
 @Controller
 @RequestMapping("/course")
-public class CourseController {
+public class  CourseController {
 
     private final CourseService courseService;
 
@@ -71,17 +73,21 @@ public class CourseController {
         return "course/catalogPage";
     }
 
+    @GetMapping("/{id}")
+    public String getCourseDetailsPage(@PathVariable Long id, Model model) {
+        Course course = courseService.getById(id);
+
+        model.addAttribute("course", course);
+
+        return "course/detailsPage";
+    }
+
     @GetMapping("/all/filter")
     public String applyFiltersForCatalogPage(@RequestParam(name = "category", defaultValue = "") String category,
                                              @RequestParam(name = "language", defaultValue = "") String language,
                                              @RequestParam(name = "minPrice", defaultValue = "0") BigDecimal minPrice,
                                              @RequestParam(name = "maxPrice", defaultValue = "9999999999") BigDecimal maxPrice,
                                              Model model) {
-
-        System.out.println(category);
-        System.out.println(language);
-        System.out.println(minPrice);
-        System.out.println(maxPrice);
 
         if (SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals("anonymousUser")) {
             Set<Course> courseSet = courseService.getAllByFilters(category, language, minPrice, maxPrice);

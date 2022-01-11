@@ -1,20 +1,20 @@
 package com.oleh.chui.learning_platform.controller;
 
+import com.oleh.chui.learning_platform.entity.Person;
 import com.oleh.chui.learning_platform.service.PersonService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.Collection;
 
 
 @Controller
-@RequestMapping("/person")
 public class PersonController {
 
     private final PersonService personService;
@@ -30,15 +30,14 @@ public class PersonController {
         return "person/all";
     }
 
-    @GetMapping("/current")
-    public String getCurrent() {
-        Collection<SimpleGrantedAuthority> authorities =
-                (Collection<SimpleGrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+    @PostMapping("/replenishBalance")
+    public String getPersons(HttpServletRequest request, @RequestParam("replenishment") BigDecimal replenishment) {
+        Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        for (SimpleGrantedAuthority role : authorities) {
-            System.out.println(role);
-        }
-        return "ROLES";
+        personService.replenishBalance(activeUser, replenishment);
+
+        String referer = request.getHeader("Referer");
+        return "redirect:" + referer;
     }
 
 }
