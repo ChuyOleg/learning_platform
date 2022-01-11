@@ -47,12 +47,48 @@
                 <button type="button" class="btn language-button" th:text="#{ukrainian}" id="ukrainianLanguageButton"></button>
             </div>
 
+            <form th:action="@{/course/all/filter}" method="get">
+                <div class="mb-2 col-4 offset-4">
+                    <select class="form-select" th:name="'category'">
+                        <option th:value="${null}" th:text="#{selectedOption}" selected></option>
+                        <option th:value="math" th:text="#{math}"></option>
+                        <option th:value="physics" th:text="#{physics}"></option>
+                        <option th:value="music" th:text="#{music}"></option>
+                        <option th:value="programming" th:text="#{programming}"></option>
+                        <option th:value="law" th:text="#{law}"></option>
+                        <option th:value="other" th:text="#{other}"></option>
+                    </select>
+                </div>
+
+                <div class="mb-2 col-4 offset-4">
+                    <select class="form-select" name="language">
+                        <option th:value="${null}" th:text="#{selectLanguage}" selected></option>
+                        <option th:value="english" th:text="#{english}"></option>
+                        <option th:value="ukrainian" th:text="#{ukrainian}"></option>
+                    </select>
+                </div>
+
+                <div style="display: flex">
+                    <div class="mb-2 col-lg-3 offset-lg-3 col-sm-5 offset-sm-1">
+                        <input class="form-control" type="number" name="minPrice" th:placeholder="#{minPrice}">
+                    </div>
+                    <div class="mb-2 col-lg-3 col-sm-5">
+                        <input class="form-control" type="number" name="maxPrice" th:placeholder="#{maxPrice}">
+                    </div>
+                </div>
+
+                <div class="mb-2 text-center">
+                    <button class="btn" type="submit" th:text="#{applyFilters}"></button>
+                </div>
+            </form>
+
             <div class="col-md-4 col-sm-6 mt-4 mb-4" th:each="course : *{courseList}">
                 <div class="text-center">
                     <div class="border border-dark p-2 catalog-field course-name" th:text="${course.name}"></div>
                     <div class="border border-dark p-2 catalog-field" th:text="#{${course.category}}"></div>
                     <div class="border border-dark p-2 catalog-field" th:text="#{${course.language}}"></div>
-                    <div class="border border-dark p-2 catalog-field" th:text="${course.price + '$'}"></div>
+                    <div class="border border-dark p-2 catalog-field" th:if="${course.price > 0}" th:text="${course.price + '$'}"></div>
+                    <div class="border border-dark p-2 catalog-field" th:if="${course.price == 0}" th:text="#{free}"></div>
                     <a class="btn show-details-button btn-primary form-control" role="button" th:href="@{/course/{id}(id=${course.id})}" th:text="#{seeDetailsButton}"></a>
                 </div>
             </div>

@@ -32,6 +32,10 @@ public class PersonService implements UserDetailsService {
         return personRepository.findAll();
     }
 
+    public Person getPersonById(Long id) {
+        return personRepository.findPersonById(id).orElse(new Person());
+    }
+
     public Person createAndGetUser(PersonDTO personDTO) {
         Person person = new Person(personDTO);
         Role role = roleService.getRoleAndCreateIfNeed(Role.RoleEnum.USER);

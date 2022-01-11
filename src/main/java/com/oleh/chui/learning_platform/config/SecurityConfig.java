@@ -4,7 +4,6 @@ import com.oleh.chui.learning_platform.service.PersonService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,14 +37,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/admin").hasAuthority("ADMIN")
                 .antMatchers("/course/all").permitAll()
+                .antMatchers("/course/all/filter").permitAll()
                 .antMatchers("/course/**").hasAnyAuthority("USER")
                 .antMatchers("/").permitAll()
                 .and()
-                .formLogin(form -> form
+            .exceptionHandling().accessDeniedPage("/course/all")
+                .and()
+            .formLogin(form -> form
                         .defaultSuccessUrl("/course/all")
                         .loginPage("/login")
                         .failureUrl("/login?error=true"))
-                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+            .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login").deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true);
 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{siteName}"></title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body class="catalog-page">
+
+<header class="blog-header text-center" th:if="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <div class="tab text-center">
+        <a th:href="@{/course/all}" th:text="#{catalogTab}"></a>
+    </div>
+    <div class="tab text-center">
+        <a th:href="@{/course/purchased}" th:text="#{purchasedCoursesTab}"></a>
+    </div>
+    <div class="tab text-center">
+        <a th:href="@{/course/createdCourses}" th:text="#{myCoursesTab}"></a>
+    </div>
+    <div class="login-or-logout-wrapper text-center">
+        <a th:href="@{/logout}" th:text="#{logoutTab}" sec:authorize="isAuthenticated()"></a>
+        <a th:href="@{/login}" th:text="#{loginTab}" sec:authorize="isAnonymous()"></a>
+    </div>
+</header>
+
+<header class="blog-header text-center" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+    <div class="tab text-center">
+        <a th:href="@{/course/all}" th:text="#{catalogTab}"></a>
+    </div>
+    <div class="tab text-center">
+        <a th:href="@{/course/users}" th:text="#{usersTab}"></a>
+    </div>
+    <div class="login-or-logout-wrapper text-center">
+        <a th:href="@{/logout}" th:text="#{logoutTab}"></a>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8 offset-sm-2 text-center mt-4">
+
+            <div class="text-center mb-4">
+                <button type="button" class="btn language-button" th:text="#{english}" id="englishLanguageButton"></button>
+                <button type="button" class="btn language-button" th:text="#{ukrainian}" id="ukrainianLanguageButton"></button>
+            </div>
+
+            <h3 class="mb-4" th:text="#{error404Message}"></h3>
+            <a class="btn btn-primary" role="button" th:href="@{/course/all}" th:text="#{goToCatalogPageButton}"></a>
+        </div>
+    </div>
+</div>
+
+<footer class="page-footer">
+    <div class="footer-copyright text-center text-success">
+        Copyright © 2022
+        <a href="https://www.instagram.com/oleh_chui">Chui Oleh</a>
+    </div>
+</footer>
+
+<script type="text/javascript" th:src="@{/js/changeLanguage.js}"></script>
+</body>
+</html>

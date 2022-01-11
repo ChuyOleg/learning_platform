@@ -14,19 +14,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Set;
 
 // TODO
 // add logger
 // add tests
 // think front validation
-// catalog shows all excluded if user is creator or course is paid
-// div size in header
-// course description set textarea
 // decompose this controller
-// update activeUserInfo in SecuritySession after every update
 // check SecurityConfig permissions for all URLs
-// add free course and implement this logic
+// add user balance
 
 @Controller
 @RequestMapping("/course")
@@ -41,9 +38,10 @@ public class CourseController {
     @GetMapping("/createdCourses")
     public String getCreatedCoursesPage(Model model) {
         Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        get created courses by userId
 
-        model.addAttribute("courseList", activeUser.getCourseSet());
+        Set<Course> courseList = courseService.getCreatedCourses(activeUser.getId());
+
+        model.addAttribute("courseList", courseList);
 
         return "course/createdCourses";
     }
@@ -51,11 +49,51 @@ public class CourseController {
     @GetMapping("/purchased")
     public String getPurchasedCoursesPage(Model model) {
         Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//          get selected courses by userId
 
-        model.addAttribute("courseList", activeUser.getSelectedCourses());
+        Set<Course> courseSet = courseService.getPurchasedCourses(activeUser.getId());
+
+        model.addAttribute("courseList", courseSet);
 
         return "course/purchasedCourses";
+    }
+
+    @GetMapping("/all")
+    public String getCatalogPage(Model model) {
+        if (SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals("anonymousUser")) {
+            Set<Course> courseSet = courseService.getCoursesForCatalog();
+            model.addAttribute("courseList", courseSet);
+        } else {
+            Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Set<Course> courseSet = courseService.getCoursesForCatalog(activeUser.getId());
+            model.addAttribute("courseList", courseSet);
+        }
+
+        return "course/catalogPage";
+    }
+
+    @GetMapping("/all/filter")
+    public String applyFiltersForCatalogPage(@RequestParam(name = "category", defaultValue = "") String category,
+                                             @RequestParam(name = "language", defaultValue = "") String language,
+                                             @RequestParam(name = "minPrice", defaultValue = "0") BigDecimal minPrice,
+                                             @RequestParam(name = "maxPrice", defaultValue = "9999999999") BigDecimal maxPrice,
+                                             Model model) {
+
+        System.out.println(category);
+        System.out.println(language);
+        System.out.println(minPrice);
+        System.out.println(maxPrice);
+
+        if (SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals("anonymousUser")) {
+            Set<Course> courseSet = courseService.getAllByFilters(category, language, minPrice, maxPrice);
+            model.addAttribute("courseList", courseSet);
+        } else {
+            Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Set<Course> courseSet = courseService.getCoursesForCatalogByFilters(activeUser.getId(), category, language, minPrice, maxPrice);
+            model.addAttribute("courseList", courseSet);
+        }
+
+        return "course/catalogPage";
+
     }
 
     @GetMapping("/new")
@@ -181,14 +219,6 @@ public class CourseController {
     @GetMapping("/created")
     public String getSuccessfullyCreationCoursePage() {
         return "course/successfulCreationPage";
-    }
-
-    @GetMapping("/all")
-    public String getCatalog(Model model) {
-        List<Course> courseList = courseService.getAll();
-        model.addAttribute("courseList", courseList);
-
-        return "course/catalogPage";
     }
 
     private void clearCourseInfoFromSession(WebRequest webRequest) {

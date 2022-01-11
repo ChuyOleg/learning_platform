@@ -7,18 +7,19 @@ import com.oleh.chui.learning_platform.entity.*;
 import com.oleh.chui.learning_platform.repository.CourseRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
 
     private final CourseRepository courseRepository;
+    private final PersonService personService;
 
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, PersonService personService) {
         this.courseRepository = courseRepository;
+        this.personService = personService;
     }
 
     public void saveCourse(CourseDTO courseDTO,
@@ -49,4 +50,63 @@ public class CourseService {
     public List<Course> getAll() {
         return courseRepository.findAll();
     }
+
+    public Set<Course> getAllByFilters(String category, String language, BigDecimal minPrice, BigDecimal maxPrice) {
+        Set<Course> courseSet = new HashSet<>(getAll());
+        return filterByPrice(filterByLanguage(filterByCategory(courseSet, category), language), minPrice, maxPrice);
+    }
+
+    public Set<Course> getCoursesForCatalog() {
+        return new HashSet<>(getAll());
+    }
+
+    public Set<Course> getCoursesForCatalog(Long personId) {
+        Person person = personService.getPersonById(personId);
+        List<Course> allCourses = courseRepository.findAll();
+        Set<Course> createdCourses = person.getCourseSet();
+        Set<Course> selectedCourses = person.getSelectedCourses();
+
+        return allCourses.stream()
+                .filter(course -> !createdCourses.contains(course) && !selectedCourses.contains(course))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<Course> getCoursesForCatalogByFilters(Long personId, String category, String language, BigDecimal minPrice, BigDecimal maxPrice) {
+        Set<Course> courseSet = getCoursesForCatalog(personId);
+        return filterByPrice(filterByLanguage(filterByCategory(courseSet, category), language), minPrice, maxPrice);
+    }
+
+    public Set<Course> getPurchasedCourses(Long personId) {
+        Person person = personService.getPersonById(personId);
+        return person.getSelectedCourses();
+    }
+
+    public Set<Course> getCreatedCourses(Long personId) {
+        Person person = personService.getPersonById(personId);
+        return person.getCourseSet();
+    }
+
+    private Set<Course> filterByCategory(Set<Course> courseSet, String category) {
+        if (!category.isEmpty()) {
+            return courseSet.stream().
+                    filter(course -> course.getCategory().equals(category)).collect(Collectors.toSet());
+        } else {
+            return courseSet;
+        }
+    }
+
+    private Set<Course> filterByLanguage(Set<Course> courseSet, String language) {
+        if (!language.isEmpty()) {
+            return courseSet.stream().
+                    filter(course -> course.getLanguage().equals(language)).collect(Collectors.toSet());
+        } else {
+            return courseSet;
+        }
+    }
+
+    private Set<Course> filterByPrice(Set<Course> courseSet, BigDecimal minPrice, BigDecimal maxPrice) {
+        return courseSet.stream().filter(course -> (course.getPrice().compareTo(minPrice) >= 0) &&
+                (course.getPrice().compareTo(maxPrice) <= 0)).collect(Collectors.toSet());
+    }
+
 }

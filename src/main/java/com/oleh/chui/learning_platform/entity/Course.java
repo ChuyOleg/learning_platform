@@ -42,9 +42,11 @@ public class Course {
     @JoinColumn(name = "creator_id")
     private Person creator;
 
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "course")
     private Set<Material> materialSet;
 
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "course")
     private Set<Question> questionSet;
 
