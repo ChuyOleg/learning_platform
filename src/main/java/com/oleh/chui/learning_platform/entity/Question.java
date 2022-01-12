@@ -20,7 +20,7 @@ public class Question {
 
     private String question;
 
-    @OneToMany(mappedBy = "question")
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
     private Set<Answer> answerSet;
 
     @ToString.Exclude

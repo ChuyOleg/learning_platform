@@ -14,7 +14,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class    SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PersonService personService;
 
@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users").hasAuthority("ADMIN")
                 .antMatchers("/course/all").permitAll()
                 .antMatchers("/course/all/filter").permitAll()
+                .antMatchers("/course/learning/*").hasAuthority("USER")
                 .antMatchers("/course/new").hasAuthority("USER")
                 .antMatchers("/course/material/new").hasAuthority("USER")
                 .antMatchers("/course/question/new").hasAuthority("USER")

@@ -44,13 +44,8 @@ public class Person implements UserDetails {
     private PersonDetails personDetails;
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
     private Set<Course> courseSet;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "person_learn_course",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
-    private Set<Course> selectedCourses;
+    @OneToMany(mappedBy = "student", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    Set<Person_Course> person_course_Set;
 
     public Person(PersonDTO personDTO) {
         this.username = personDTO.getUsername();
@@ -58,6 +53,7 @@ public class Person implements UserDetails {
         this.email = personDTO.getEmail();
         this.birthday = personDTO.getBirthday();
         this.role = Role.builder().role(Role.RoleEnum.USER).build();
+        this.blocked = false;
     }
 
     @Override

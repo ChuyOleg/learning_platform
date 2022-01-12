@@ -1,32 +1,32 @@
 package com.oleh.chui.learning_platform.controller;
 
-import com.oleh.chui.learning_platform.dto.*;
+import com.oleh.chui.learning_platform.dto.AnswerDTO;
+import com.oleh.chui.learning_platform.dto.AnswerDtoList;
 import com.oleh.chui.learning_platform.entity.Course;
 import com.oleh.chui.learning_platform.entity.Person;
+import com.oleh.chui.learning_platform.entity.Person_Course;
 import com.oleh.chui.learning_platform.service.CourseService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Set;
 
 // TODO
 // add logger
 // add tests
 // think front validation
-// decompose this controller
 // check SecurityConfig permissions for all URLs
 // think about making one table from Person and PersonDetails
-// before buying check if user is author or course is already buying
-// delete taxNumber because user can be 18 years younger
-// think about welcome page (URL = http://localhost:8080)
+// add constraint for date of birthday
+// learningPage check if user buy this course
 
 @Controller
 @RequestMapping("/course")
@@ -76,15 +76,29 @@ public class CourseController {
 
     @GetMapping("/{id}")
     public String getCourseDetailsPage(@PathVariable Long id, Model model) {
-        Course course = courseService.getById(id);
+        if (SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals("anonymousUser")) {
+            Course course = courseService.getById(id);
+            model.addAttribute("course", course);
+        } else {
+            Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Course course = courseService.getById(id);
 
-        model.addAttribute("course", course);
+            if (activeUser.getPerson_course_Set() == null ||
+                    activeUser.getPerson_course_Set().stream().noneMatch(data -> data.getCourse().equals(course))) {
+                model.addAttribute("canBuy", true);
+            } else {
+                model.addAttribute("canBuy", false);
+            }
+
+            model.addAttribute("course", course);
+
+        }
 
         return "course/detailsPage";
     }
 
     @PostMapping("/buy/{id}")
-    public String buyCourse(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String buyCourse(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Course course = courseService.getById(id);
 
@@ -115,180 +129,61 @@ public class CourseController {
         }
 
         return "course/catalogPage";
-
     }
 
-    @GetMapping("/new")
-    public String getCourseCreatingBaseInfoPage(HttpSession session, Model model) {
-        CourseDTO courseDTO = (CourseDTO) session.getAttribute("courseDTO");
+    @GetMapping("/learning/{id}")
+    public String getLearningPage(@PathVariable("id") Long id, Model model) {
+        Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Course course = courseService.getById(id);
 
-        if (courseDTO == null) {
-            courseDTO = new CourseDTO();
+        if (activeUser.getPerson_course_Set().stream().noneMatch(data -> data.getCourse().equals(course))) {
+            return "redirect:/course/all";
         }
 
-        model.addAttribute("course", courseDTO);
+        Person_Course tempList = new ArrayList<>(course.getPerson_courseSet()).get(0);
 
-        return "course/createCourseBaseInfo";
-    }
-
-
-    @PostMapping("/new")
-    public String addCourseInfoToSession(HttpSession session, @ModelAttribute("course") @Valid CourseDTO courseDTO,
-                                         BindingResult result) {
-
-        if (result.hasErrors()) {
-            return "course/createCourseBaseInfo";
-        } else {
-            session.setAttribute("courseDTO", courseDTO);
+        AnswerDtoList answerDtoList = new AnswerDtoList();
+        for (int i = 0; i < course.getQuestionSet().size(); i++) {
+            answerDtoList.addAnswerDTO(new AnswerDTO(""));
         }
 
-        return "redirect:/course/material/new";
+        model.addAttribute("answerDtoList", answerDtoList);
 
+        model.addAttribute("isFinished", tempList.isFinished());
+        model.addAttribute("mark", tempList.getMark());
+        model.addAttribute("userAnswers", new String[course.getQuestionSet().size()]);
+        model.addAttribute("course", course);
+
+        return "/course/learningPage";
     }
 
-    @GetMapping("/material/new")
-    public String getMaterialPage(HttpSession session, Model model) {
+    @PostMapping("/learning/{id}")
+    public String finishCourse(@ModelAttribute("answerDtoList") AnswerDtoList answerDtoList,
+                               @PathVariable("id") Long id,
+                               HttpServletRequest httpServletRequest,
+                               RedirectAttributes redirectAttributes) {
 
-        MaterialDtoList materialDtoList = (MaterialDtoList) session.getAttribute("materialDtoList");
+        Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Course course = courseService.getById(id);
 
-        if (materialDtoList == null) {
-            materialDtoList = new MaterialDtoList();
-            MaterialDTO materialDTO = new MaterialDTO("");
-            materialDtoList.addMaterialDTO(materialDTO);
+        if (course.getQuestionSet().size() != answerDtoList.getAnswerDTOList().size()) {
+            redirectAttributes.addFlashAttribute("emptyAnswersError", true);
+            String referer = httpServletRequest.getHeader("Referer");
+            return "redirect:" + referer;
         }
 
-        model.addAttribute("materialDtoList", materialDtoList);
-
-        return "course/createMaterial";
-    }
-
-    @PostMapping("/material/new")
-    public String addMaterialInfoToSession(HttpSession session, Model model,
-                                           @ModelAttribute("materialDtoList") @Valid MaterialDtoList materialDtoList,
-                                           BindingResult result) {
-
-        for (MaterialDTO materialDTO : materialDtoList.getMaterialDTOList()) {
-            if (materialDTO.getMaterial().isEmpty()) {
-                model.addAttribute("materialIsEmptyError", true);
-                return "course/createMaterial";
+        for (AnswerDTO answerDTO : answerDtoList.getAnswerDTOList()) {
+            if (answerDTO.getAnswer() == null) {
+                redirectAttributes.addFlashAttribute("emptyAnswersError", true);
+                String referer = httpServletRequest.getHeader("Referer");
+                return "redirect:" + referer;
             }
         }
 
-        if (result.hasErrors()) {
-            MaterialDtoList defaultMaterialDtoList = new MaterialDtoList();
-            defaultMaterialDtoList.addMaterialDTO(new MaterialDTO(""));
-            model.addAttribute("materialIsEmptyError", true);
-            model.addAttribute("materialDtoList", defaultMaterialDtoList);
-            return "course/createMaterial";
-        } else {
-            session.setAttribute("materialDtoList", materialDtoList);
-        }
+        courseService.finishCourseAndGetMark(activeUser, course, answerDtoList);
 
-        return "redirect:/course/question/new";
-    }
-
-    @GetMapping("/question/new")
-    public String getQuestionsPage(HttpSession session, Model model) {
-
-        QuestionDtoList questionDtoList = (QuestionDtoList) session.getAttribute("questionDtoList");
-
-        if (questionDtoList == null) {
-            questionDtoList = new QuestionDtoList();
-            QuestionDTO questionDTO = new QuestionDTO("", "", "", "", "");
-            questionDtoList.addQuestionDTO(questionDTO);
-        }
-
-        model.addAttribute("questionDtoList", questionDtoList);
-
-        return "course/createQuestions";
-    }
-
-    @PostMapping("/question/new")
-    public String saveCourse(HttpSession session, Model model, WebRequest webRequest, RedirectAttributes redirectAttributes,
-                             @ModelAttribute("questionDtoList") @Valid QuestionDtoList questionDtoList,
-                             BindingResult result) {
-
-        for (QuestionDTO questionDTO : questionDtoList.getQuestionDTOList()) {
-            if (questionDTO.getQuestion().isEmpty())
-                return getQuestionPageWithQuestionIsEmptyErrorMessage(model);
-            else if (questionDTO.getAnswer1().isEmpty() || questionDTO.getAnswer2().isEmpty() || questionDTO.getAnswer3().isEmpty())
-                return getQuestionPageWithAnswerTextIsEmptyErrorMessage(model);
-            else if (questionDTO.getCorrectAnswer() == null)
-                return getQuestionPageWithAnswerRadioIsEmptyErrorMessage(model);
-        }
-
-        if (result.hasErrors())
-            return getQuestionPageWithZeroQuestionsErrorMessage(model);
-
-        session.setAttribute("questionDtoList", questionDtoList);
-        CourseDTO courseDTO = (CourseDTO) session.getAttribute("courseDTO");
-        MaterialDtoList materialDtoList = (MaterialDtoList) session.getAttribute("materialDtoList");
-        Person activeUser = (Person) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        String validateResult = validateCourseInfoAndMaterials(courseDTO, materialDtoList);
-        if (validateResult.equals("courseBaseInfoIsEmptyError")) {
-            return getRedirectedCourseBaseInfoPageWithErrorMessage(redirectAttributes);
-        } else if (validateResult.equals("materialIsEmptyError")) {
-            return getRedirectedMaterialPageWithErrorMessage(redirectAttributes);
-        } else {
-            courseService.saveCourse(courseDTO, materialDtoList, questionDtoList, activeUser);
-            clearCourseInfoFromSession(webRequest);
-        }
-
-        return "redirect:/course/created";
-    }
-
-    @GetMapping("/created")
-    public String getSuccessfullyCreationCoursePage() {
-        return "course/successfulCreationPage";
-    }
-
-    private void clearCourseInfoFromSession(WebRequest webRequest) {
-        webRequest.removeAttribute("courseDTO", WebRequest.SCOPE_SESSION);
-        webRequest.removeAttribute("materialDtoList", WebRequest.SCOPE_SESSION);
-        webRequest.removeAttribute("questionDtoList", WebRequest.SCOPE_SESSION);
-    }
-
-    private String getQuestionPageWithZeroQuestionsErrorMessage(Model model) {
-        QuestionDtoList defaultQuestionDtoList = new QuestionDtoList();
-        defaultQuestionDtoList.addQuestionDTO(new QuestionDTO("", "", "", "", ""));
-        model.addAttribute("zeroQuestionsError", true);
-        model.addAttribute("questionDtoList", defaultQuestionDtoList);
-        return "course/createQuestions";
-    }
-
-    private String getQuestionPageWithQuestionIsEmptyErrorMessage(Model model) {
-        model.addAttribute("questionIsEmptyError", true);
-        return "course/createQuestions";
-    }
-
-    private String getQuestionPageWithAnswerTextIsEmptyErrorMessage(Model model) {
-        model.addAttribute("answerTextIsEmptyError", true);
-        return "course/createQuestions";
-    }
-
-    private String getQuestionPageWithAnswerRadioIsEmptyErrorMessage(Model model) {
-        model.addAttribute("answerRadioIsEmptyError", true);
-        return "course/createQuestions";
-    }
-
-    private String getRedirectedCourseBaseInfoPageWithErrorMessage(RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("courseBaseInfoIsEmptyError", true);
-        return "redirect:/course/new";
-    }
-
-    private String getRedirectedMaterialPageWithErrorMessage(RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("materialIsEmptyError", true);
-        return "redirect:/course/material/new";
-    }
-
-    private String validateCourseInfoAndMaterials(CourseDTO courseDTO, MaterialDtoList materialDtoList) {
-        if (courseDTO == null)
-            return "courseBaseInfoIsEmptyError";
-        else if (materialDtoList == null)
-            return "materialIsEmptyError";
-        else
-            return "No errors";
+        String referer = httpServletRequest.getHeader("Referer");
+        return "redirect:" + referer;
     }
 
 }

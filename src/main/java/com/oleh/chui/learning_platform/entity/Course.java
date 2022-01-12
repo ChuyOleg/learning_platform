@@ -52,8 +52,8 @@ public class Course {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @ManyToMany(mappedBy = "selectedCourses")
-    private Set<Person> students;
+    @OneToMany(mappedBy = "course")
+    Set<Person_Course> person_courseSet;
 
     public Course(CourseDTO courseDTO, Set<Material> materialSet,
                   Set<Question> questionSet, Person creator) {

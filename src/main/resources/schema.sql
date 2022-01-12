@@ -34,7 +34,6 @@ CREATE TABLE IF NOT EXISTS courses (
 CREATE TABLE IF NOT EXISTS materials (
     id serial PRIMARY KEY ,
     data text NOT NULL ,
-    material_type_id int Not Null ,
     course_id int references courses(id) NOT NULL
 );
 
@@ -52,7 +51,9 @@ CREATE TABLE IF NOT EXISTS answers (
 );
 
 CREATE TABLE IF NOT EXISTS person_learn_course (
-  id serial PRIMARY KEY ,
-  student_id int references persons(id) NOT NULL ,
-  course_id int references courses(id) NOT NULL
+    id serial PRIMARY KEY ,
+    student_id int references persons(id) NOT NULL ,
+    course_id int references courses(id) NOT NULL ,
+    finished BOOLEAN NOT NULL DEFAULT FALSE ,
+    mark int
 );

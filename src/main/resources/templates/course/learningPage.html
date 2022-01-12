@@ -10,7 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
-<body class="catalog-page">
+<body class="details-page">
 
 <header class="blog-header text-center" th:if="${!#authorization.expression('hasAuthority(''ADMIN'')')}">
     <div class="balance-wrapper text-center" th:if="${#authorization.expression('hasAuthority(''USER'')')}">
@@ -23,7 +23,7 @@
         <a th:href="@{/course/all}" th:text="#{catalogTab}"></a>
     </div>
     <div class="tab text-center">
-        <a style="background: dodgerblue" th:href="@{/course/purchased}" th:text="#{purchasedCoursesTab}"></a>
+        <a th:href="@{/course/purchased}" th:text="#{purchasedCoursesTab}"></a>
     </div>
     <div class="tab text-center">
         <a th:href="@{/course/createdCourses}" th:text="#{myCoursesTab}"></a>
@@ -49,16 +49,40 @@
             <button type="button" class="btn language-button" th:text="#{ukrainian}" id="ukrainianLanguageButton"></button>
         </div>
 
-        <form class="col-md-4 col-sm-6 mt-4 mb-4" th:action="@{/course/learning/{id}(id=${course.id})}" th:each="course : *{courseList}">
-            <div class="text-center">
-                <div class="border border-dark p-2 catalog-field course-name" th:text="${course.name}"></div>
-                <div class="border border-dark p-2 catalog-field" th:text="#{${course.category}}"></div>
-                <div class="border border-dark p-2 catalog-field" th:text="#{${course.language}}"></div>
-                <div class="border border-dark p-2 catalog-field" th:if="${course.price > 0}" th:text="${course.price + '$'}"></div>
-                <div class="border border-dark p-2 catalog-field" th:if="${course.price == 0}" th:text="#{free}"></div>
-                <button class="btn form-control" type="submit" th:text="#{studyButton}"></button>
+
+        <div class="col-8 offset-2 mt-4 mb-4 text-center" th:object="${course}">
+            <div class="border border-dark p-2 mb-4 catalog-field course-name" th:text="*{name}"></div>
+
+            <div class="mark-wrapper mb-5" th:if="${isFinished}">
+                <div class="isFinished" th:text="#{youFinishedThisCourse}"></div>
+                <div class="mark-block">
+                    <span th:text="#{yourMarkIs}"></span><span th:text="${mark}"></span>
+                </div>
             </div>
-        </form>
+
+            <div class="material-wrapper p-2 mb-5">
+                <span class="mb-2" style="font-weight: bold" th:text="#{materials}"></span>
+                <div class="mb-4" th:each="material : ${course.getMaterialSet()}">
+                    <div th:text="${material.data}"></div>
+                </div>
+            </div>
+
+            <form class="question-answer-form" th:if="${!isFinished}" th:action="@{/course/learning/{id}(id=${course.id})}" method="post" >
+                <p class="error-message" th:if="${emptyAnswersError}" th:text="#{answerTextIsEmptyError}"></p>
+                <div class="mb-2 mt-2" style="font-weight: bold" th:text="#{tasks}"></div>
+                <div class="mb-4 question-answer-wrapper" th:each="questionObj, iter : ${course.getQuestionSet()}">
+                    <div class="question mb-3" th:text="${questionObj.question}"></div>
+                    <div class="form-check form-check-inline" th:each="answerObj : ${questionObj.getAnswerSet()}">
+                        <div th:object="${answerDtoList}">
+                            <input class="form-check-input" th:field="*{answerDTOList[__${iter.index}__].answer}" type="radio" th:value="${answerObj.answer}" th:name="${questionObj.id}">
+                            <label class="form-check-label" th:text="${answerObj.answer}"></label>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn send-answers-button mb-2" type="submit" th:text="#{finishLearningButton}"></button>
+            </form>
+
+        </div>
 
     </div>
 </div>

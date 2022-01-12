@@ -22,6 +22,7 @@ public class Answer {
     private boolean isCorrect;
 
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
     private Question question;

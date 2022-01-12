@@ -326,6 +326,37 @@ body.details-page .buy-button:hover {
 }
 
 
+/*********   LEARNING PAGE   **********/
+/**************************************/
+
+.material-wrapper {
+    background: wheat;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.question-answer-form {
+    background: #f3d6ff;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.question-answer-wrapper {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.mark-wrapper {
+    color: #198754;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.isfFinished {
+
+}
+
+
 @media only screen and (max-width: 900px) {
     /*    HEADER      */
     header .tab a {

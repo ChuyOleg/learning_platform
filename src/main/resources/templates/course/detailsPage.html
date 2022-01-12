@@ -75,7 +75,7 @@
                 <div sec:authorize="isAuthenticated()">
                     <button  type="submit" class="btn form-control buy-button"
                             th:if="${course.creator.id!=#authentication.getPrincipal().getId() && #authorization.expression('hasAuthority(''USER'')')
-                             && !#authentication.getPrincipal().getSelectedCourses().contains(course)}" th:text="#{buyButton}">
+                            && canBuy}" th:text="#{buyButton}">
                     </button>
                 </div>
             </div>
