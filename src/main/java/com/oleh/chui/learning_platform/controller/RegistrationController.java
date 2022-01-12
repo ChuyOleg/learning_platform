@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/registration")
@@ -45,6 +46,11 @@ public class RegistrationController {
 
         if (!personDTO.getPassword().equals(personDTO.getPasswordCopy())) {
             model.addAttribute("passwordsDontMatch", true);
+            return "registration";
+        }
+
+        if (LocalDate.now().getYear() - personDTO.getBirthday().getYear() > 150) {
+            model.addAttribute("tooOldError", true);
             return "registration";
         }
 

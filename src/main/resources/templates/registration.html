@@ -27,6 +27,7 @@
                         <div class="mb-2">
                             <label for="username" th:text="#{username}"></label>
                             <input type="text" class="form-control" th:field="*{username}" id="username"/>
+                            <p class="error-message" style="display: none" th:text="#{incorrectUsername}" id="usernameError"></p>
                             <p class="error-message" th:if="${#fields.hasErrors('username')}" th:text="#{incorrectUsername}"></p>
                             <p class="error-message" th:if="${#request.getAttribute('userAlreadyExistsError')}" th:text="#{usernameIsOccupied}"></p>
                         </div>
@@ -34,12 +35,14 @@
                         <div class="mb-2">
                             <label for="password" th:text="#{password}"></label>
                             <input type="password" class="form-control" th:field="*{password}" id="password"/>
+                            <p class="error-message" style="display: none" th:text="#{weekPassword}" id="passwordError"></p>
                             <p class="error-message" th:if="${#fields.hasErrors('password')}" th:text="#{weekPassword}"></p>
                         </div>
 
                         <div class="mb-2">
                             <label for="passwordCopy" th:text="#{repeatPassword}"></label>
                             <input type="password" class="form-control" th:field="*{passwordCopy}" id="passwordCopy"/>
+                            <p class="error-message" style="display: none" th:text="#{secondPasswordDoesntMatchPattern}" id="passwordCopyError"></p>
                             <p class="error-message" th:if="${#fields.hasErrors('passwordCopy')}" th:text="#{secondPasswordDoesntMatchPattern}"></p>
                             <p class="error-message" th:if="${#request.getAttribute('passwordsDontMatch')}" th:text="#{passwordsDontMatch}"></p>
                         </div>
@@ -47,23 +50,27 @@
                         <div class="mb-2">
                             <label for="email" th:text="#{email}"></label>
                             <input type="email" class="form-control" th:field="*{email}" id="email"/>
+                            <p class="error-message" style="display: none" th:text="#{incorrectEmail}" id="emailError"></p>
                             <p class="error-message" th:if="${#fields.hasErrors('email')}" th:text="#{incorrectEmail}"></p>
                         </div>
 
                         <div class="mb-2">
                             <label for="birthday" th:text="#{birthday}"></label>
                             <input type="date" class="form-control" th:field="*{birthday}" id="birthday"/>
+                            <p class="error-message" style="display: none" th:text="#{incorrectBirthday}" id="birthdayError"></p>
+                            <p class="error-message" th:if="${#request.getAttribute('tooOldError')}" th:text="#{tooOldError}"></p>
                             <p class="error-message" th:if="${#fields.hasErrors('birthday')}" th:text="#{incorrectBirthday}"></p>
                         </div>
 
                         <div class="mb-4">
                             <label for="taxNumber" th:text="#{taxNumber}"></label>
                             <input type="text" class="form-control" th:field="*{taxNumber}" id="taxNumber"/>
+                            <p class="error-message" style="display: none" th:text="#{emptyTaxNumber}" id="taxNumberError"></p>
                             <p class="error-message" th:if="${#fields.hasErrors('taxNumber')}" th:text="#{emptyTaxNumber}"></p>
                             <p class="error-message" th:if="${#request.getAttribute('taxNumberAlreadyExistsError')}" th:text="#{taxNumberAlreadyExists}"></p>
                         </div>
 
-                        <div class="text-center"><input type="submit" th:value="#{registerButton}" class="btn px-5 mb-2 w-100"></div>
+                        <div class="text-center"><input type="button" th:value="#{registerButton}" class="btn px-5 mb-2 w-100" id="registerButton"></div>
 
                         <div class="form-text text-center mb-1">
                             <span th:text="#{alreadyHaveAnAccount}"></span><a th:href="@{/login}" th:text="#{login}" class="login-link"></a>
@@ -82,6 +89,7 @@
         </div>
     </footer>
 
-    <script type="text/javascript" th:src="@{/js/changeLanguage.js}"></script>
+<script type="text/javascript" th:src="@{/js/changeLanguage.js}"></script>
+<script type="text/javascript" th:src="@{/js/registration.js}"></script>
 </body>
 </html>

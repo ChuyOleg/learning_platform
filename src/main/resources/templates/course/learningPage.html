@@ -67,7 +67,7 @@
                 </div>
             </div>
 
-            <form class="question-answer-form" th:if="${!isFinished}" th:action="@{/course/learning/{id}(id=${course.id})}" method="post" >
+            <form class="question-answer-form" th:if="${!isFinished}" th:action="@{/course/learning/{id}(id=${course.id})}" method="post" id="answersForm">
                 <p class="error-message" th:if="${emptyAnswersError}" th:text="#{answerTextIsEmptyError}"></p>
                 <div class="mb-2 mt-2" style="font-weight: bold" th:text="#{tasks}"></div>
                 <div class="mb-4 question-answer-wrapper" th:each="questionObj, iter : ${course.getQuestionSet()}">
@@ -79,7 +79,8 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn send-answers-button mb-2" type="submit" th:text="#{finishLearningButton}"></button>
+                <p class="error-message" th:text="#{answerRadioIsEmptyError}" style="display: none" id="errorMessage"></p>
+                <button class="btn send-answers-button mb-2" type="button" th:text="#{finishLearningButton}" id="finishCourseButton"></button>
             </form>
 
         </div>
@@ -96,5 +97,6 @@
 
 <script type="text/javascript" th:src="@{/js/changeLanguage.js}"></script>
 <script type="text/javascript" th:src="@{/js/replenishBalance.js}"></script>
+<script type="text/javascript" th:src="@{/js/finishCourse.js}"></script>
 </body>
 </html>

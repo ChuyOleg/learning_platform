@@ -58,9 +58,10 @@
                     <p class="error-message text-center" th:if="${#request.getAttribute('courseBaseInfoIsEmptyError')}" th:text="#{courseBaseInfoIsEmptyError}"></p>
 
                     <div class="mb-2">
-                        <label for="username" th:text="#{courseName}"></label>
-                        <input type="text" class="form-control" th:field="*{name}" id="username"/>
+                        <label for="courseName" th:text="#{courseName}"></label>
+                        <input type="text" class="form-control" th:field="*{name}" id="courseName"/>
                         <p class="error-message" th:if="${#fields.hasErrors('name')}" th:text="#{courseNameIsEmptyError}"></p>
+                        <p class="error-message" style="display: none" th:text="#{courseNameIsEmptyError}" id="courseNameIsEmptyErrorMessage"></p>
                     </div>
 
                     <div class="mb-4">
@@ -69,7 +70,7 @@
                     </div>
 
                     <div class="mb-2">
-                        <select class="form-select" th:field="*{category}">
+                        <select class="form-select" th:field="*{category}" id="category">
                             <option th:value="${null}" th:text="#{selectedOption}" selected></option>
                             <option th:value="math" th:text="#{math}"></option>
                             <option th:value="physics" th:text="#{physics}"></option>
@@ -78,6 +79,7 @@
                             <option th:value="law" th:text="#{law}"></option>
                             <option th:value="other" th:text="#{other}"></option>
                         </select>
+                        <p class="error-message" style="display: none" th:text="#{courseCategoryIsEmptyError}" id="courseCategoryIsEmptyErrorMessage"></p>
                         <p class="error-message" th:if="${#fields.hasErrors('category')}" th:text="#{courseCategoryIsEmptyError}"></p>
                     </div>
 
@@ -99,6 +101,7 @@
                             <label class="form-check-label" for="ukrRadio">Ukrainian</label>
                         </div>
 
+                        <p class="error-message" style="display: none" th:text="#{courseLanguageIsEmpty}" id="courseLanguageIsEmptyMessage"></p>
                         <p class="error-message" th:if="${#fields.hasErrors('language')}" th:text="#{courseLanguageIsEmpty}"></p>
                     </div>
 
@@ -106,7 +109,7 @@
             </div>
 
             <div class="text-center mb-5">
-                <button type="submit" class="btn" th:text="#{continueButton}"></button>
+                <button type="button" class="btn" th:text="#{continueButton}" id="sendCourseBaseInfoButton"></button>
             </div>
 
         </form>
@@ -121,5 +124,6 @@
 
 <script type="text/javascript" th:src="@{/js/changeLanguage.js}"></script>
 <script type="text/javascript" th:src="@{/js/replenishBalance.js}"></script>
+<script type="text/javascript" th:src="@{/js/createCourseBaseInfo.js}"></script>
 </body>
 </html>
