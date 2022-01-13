@@ -6,6 +6,7 @@ import com.oleh.chui.learning_platform.entity.Course;
 import com.oleh.chui.learning_platform.entity.Person;
 import com.oleh.chui.learning_platform.entity.Person_Course;
 import com.oleh.chui.learning_platform.service.CourseService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,17 +15,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Set;
 
-// TODO
-// add logger
-// add tests
-// think front validation
-// check SecurityConfig permissions for all URLs
-// add constraint for date of birthday
 
 @Controller
+@Log4j2
 @RequestMapping("/course")
 public class CourseController {
 
@@ -104,6 +99,7 @@ public class CourseController {
         }
 
         courseService.userBuyCourse(activeUser, id);
+        log.debug(String.format("User (name = %s, id = %d) buy course (id = %d)", activeUser.getUsername(), activeUser.getId(), course.getId()));
 
         return "redirect:/course/purchased";
     }
@@ -178,6 +174,7 @@ public class CourseController {
         }
 
         courseService.finishCourseAndGetMark(activeUser, course, answerDtoList);
+        log.debug(String.format("User (name = %s, id = %d) has finished course (id = %d)", activeUser.getUsername(), activeUser.getId(), course.getId()));
 
         String referer = httpServletRequest.getHeader("Referer");
         return "redirect:" + referer;

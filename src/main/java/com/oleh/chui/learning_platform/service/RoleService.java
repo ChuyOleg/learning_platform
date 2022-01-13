@@ -20,4 +20,8 @@ public class RoleService {
 
         return role.orElseGet(() -> roleRepository.save(Role.builder().role(roleEnum).build()));
     }
+
+    public Role save(Role role) {
+        return roleRepository.save(role);
+    }
 }

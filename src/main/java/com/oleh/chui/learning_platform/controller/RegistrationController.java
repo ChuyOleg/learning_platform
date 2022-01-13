@@ -4,6 +4,7 @@ import com.oleh.chui.learning_platform.dto.PersonDTO;
 import com.oleh.chui.learning_platform.entity.Person;
 import com.oleh.chui.learning_platform.service.PersonDetailsService;
 import com.oleh.chui.learning_platform.service.PersonService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 
 @Controller
+@Log4j2
 @RequestMapping("/registration")
 public class RegistrationController {
 
@@ -66,6 +68,7 @@ public class RegistrationController {
 
         Person user = personService.createAndGetUser(personDTO);
         autoAuth(user);
+        log.debug(String.format("New user has registered (name = %s, id = %d)", user.getUsername(), user.getId()));
 
         return "redirect:/course/all";
     }
